@@ -2,102 +2,99 @@
 using System.Collections;
 using System.Collections.Generic;
 
-
-[System.Serializable]
-public struct posRange
-{
-    public float range;
-    public Vector2 position;
-}
-
 public class Asteroid : MonoBehaviour {
 
-    static Plane XZPlane = new Plane(Vector3.up, Vector3.zero);
-
-    public Bounds maxSize = new Bounds(Vector3.zero, new Vector3(20,20, 0));
+    public GameObject GridGameObject;
+    private Grid GridScript;
 
     public List<posRange> posRangeList = new List<posRange>();
+    public List<GameObject> AsteroidCells = new List<GameObject>();
 
-    public List<GridCell> Grid = new List<GridCell>();
-
-
-    void Start ()
+    void Start()
     {
-        for (int i = 0; i < 100; i++)
+        if (GridGameObject != null)
         {
-            for (int j = 0; j < 100; j++)
+            GridScript = GridGameObject.GetComponent<Grid>();
+
+            if (GridScript != null)
+                GridScript.AddAsteroid(gameObject);
+        }
+
+        CreateAsteroid();
+    }
+	
+    public void CreateAsteroid()
+    {
+        int minX = int.MaxValue;
+        int maxX = 0;
+        int minY = int.MaxValue;
+        int maxY = 0;
+
+        foreach (posRange posRangeItem in posRangeList)
+        {
+            Vector2 pos = posRangeItem.position + new Vector2(transform.position.x, transform.position.y);
+            float range = posRangeItem.range;
+
+            if (pos.x - range < minX)
+                minX = (int)(pos.x - range);
+
+            if (pos.x + range > maxX)
+                maxX = (int)(pos.x + range);
+
+            if (pos.y - range < minY)
+                minY = (int)(pos.y - range);
+
+            if (pos.y + range > maxY)
+                maxY = (int)(pos.y + range);
+        }
+
+
+        Dictionary<Vector2, GameObject> asteroidCellsForGrid = new Dictionary<Vector2, GameObject>();
+
+        for (int x = minX-2; x < maxX+2; x++)
+        {
+            for (int y = minY-2; y < maxY+2; y++)
             {
                 foreach (posRange posRangeItem in posRangeList)
                 {
-                    Bounds gridBox = new Bounds(new Vector3(i, j, 0), new Vector3(1,1,0));
-                    
-                    if (Vector3.Distance(posRangeItem.position, gridBox.ClosestPoint(posRangeItem.position)) < posRangeItem.range)
+                    Bounds cellBounds = new Bounds(new Vector2(x, y), new Vector2(1, 1));
+
+                    Vector2 pos = posRangeItem.position + new Vector2(transform.position.x, transform.position.y);
+                    float closestPointDist = Vector2.Distance(pos, cellBounds.ClosestPoint(pos));
+
+                    if (closestPointDist < posRangeItem.range)
                     {
-                        GridCell tempGridCell = new GridCell(new Vector3(i, j, 0));
-                        Grid.Add(tempGridCell);
-                        tempGridCell.IsAsteroid = true;
+                        GameObject temp = new GameObject(gameObject.name + ": " + x + " - " + y);
+                        temp.transform.position = new Vector2(x, y);
+                        AsteroidCells.Add(temp);
+                        asteroidCellsForGrid.Add(new Vector2(x, y), temp);
+
                         break;
                     }
                 }
             }
         }
+
+        GridScript.SetAsteroidCells(asteroidCellsForGrid);
+    }
+
+
+
+	// Update is called once per frame
+	void Update () {
+	
 	}
-
-    void Update()
-    {
-        if (Grid == null)
-            return;
-
-        if (Input.GetMouseButtonDown(0))
-        {
-
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit2D hit = Physics2D.GetRayIntersection(ray, Mathf.Infinity);
-            if(hit.collider != null && hit.collider.gameObject != null)
-                Debug.Log(hit.collider.gameObject);
-            /* Vector3 mousePos = GetMousePositionOnXZPlane();
-
-             if (mousePos.x > -0.5f && mousePos.x < 19 && mousePos.z > -0.5f && mousePos.z < 19)
-             {
-                 mousePos = new Vector3(Mathf.Round(mousePos.x), 0, Mathf.Round(mousePos.z));
-
-                 GridCell mouseOverCell = Grid[(int)mousePos.x][(int)mousePos.z];
-
-                 if (!mouseOverCell.IsSelected)
-                     mouseOverCell.IsSelected = true;
-                 else
-                     mouseOverCell.IsSelected = false;
-             }*/
-        }
-    }
-    public static Vector3 GetMousePositionOnXZPlane()
-    {
-        float distance;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (XZPlane.Raycast(ray, out distance))
-        {
-            Vector3 hitPoint = ray.GetPoint(distance);
-            //Just double check to ensure the y position is exactly zero
-            hitPoint.y = 0;
-            return hitPoint;
-        }
-        return Vector3.zero;
-    }
-
     void OnDrawGizmos()
     {
+        Gizmos.color = Color.green;
+        foreach (GameObject cell in AsteroidCells)
+        {
+            Gizmos.DrawWireCube(cell.transform.position, new Vector2(1, 1));
+        }
+        Gizmos.color = Color.red;
         foreach (posRange posRangeItem in posRangeList)
         {
-            Gizmos.DrawWireSphere(posRangeItem.position, posRangeItem.range);
-        }
-        if (Grid == null)
-            return;
-
-        foreach (GridCell gridCell in Grid)
-        {
-            gridCell.OnDrawGizmos();
-        }
-        
+            Gizmos.DrawWireSphere(new Vector2(posRangeItem.position.x + transform.position.x, posRangeItem.position.y + transform.position.y), posRangeItem.range);
+        }        
     }
 }
-
