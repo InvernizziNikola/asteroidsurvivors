@@ -3,63 +3,57 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-[System.Serializable]
-public struct posRange
-{
-    public float range;
-    public Vector2 position;
-}
 
-[System.Serializable]
-public struct position
-{
-    public position(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-    int x;
-    int y;
-}
+
 public class Grid : MonoBehaviour {
     
     private Plane plane = new Plane(Vector3.forward, 0);
     public int GridWidth = 100;
     public int GridHeight = 100;
 
-    private List<List<GameObject>> GridList = new List<List<GameObject>>();
+    public GameObject StartingAsteroid;
 
-    private List<GameObject> AsteroidList = new List<GameObject>();
+    public List<GameObject> AsteroidList = new List<GameObject>();
 
-
-    private Dictionary<position, GameObject> CellList = new Dictionary<position, GameObject>();
+    private Dictionary<Position, GameObject> CellList = new Dictionary<Position, GameObject>();
 
 
     void Start ()
     {
-        // CREATE GRID WITH NULL OBJECTS
-        for (int i = 0; i < GridWidth; i++)
+
+        Profiler.BeginSample("MyPieceOfCode");
+        foreach (GameObject asteroid in GameObject.FindGameObjectsWithTag("Asteroid"))
         {
-            GridList.Add(new List<GameObject>());
-            for (int j = 0; j < GridHeight; j++)
+            if (!AsteroidList.Contains(asteroid))
+                AsteroidList.Add(asteroid);
+                
+            Asteroid asteroidScript = asteroid.GetComponent<Asteroid>();
+            if (asteroidScript != null)
             {
-                GridList[i].Add(null);
+                asteroidScript.GenerateCellsForAsteroid();
+                SetAsteroidCells(asteroidScript.AsteroidCells);
             }
         }
 
-        CellList.ContainsKey(new position(1,2));
+        Profiler.EndSample();
     }
 
-    public void SetAsteroidCells(Dictionary<Vector2, GameObject> cells)
+    public void SetAsteroidCells(Dictionary<Position, GameObject> cells)
     {
-        foreach (KeyValuePair<Vector2, GameObject> cell in cells)
+        foreach (KeyValuePair<Position, GameObject> cell in cells)
         {
-            int x = (int)cell.Key.x;
-            int y = (int)cell.Key.y;
-
-            if(x >= 0 && y >= 0 && x <= GridWidth && y <= GridHeight)
-                GridList[x][y] = cell.Value;
+            if(!CellList.ContainsKey(cell.Key))
+            {
+                CellList.Add(cell.Key, cell.Value);
+            }
+            else
+            {
+                Position position = cell.Key;
+                Debug.LogWarning("Cell" + position + " already exists, still updating it to new value");
+                CellList[position] = cell.Value;
+            }
         }
+
     }        
 
     public void AddAsteroid(GameObject newAsteroid)
@@ -69,6 +63,7 @@ public class Grid : MonoBehaviour {
 
     void Update()
     {
+
         if (Input.GetMouseButtonDown(0))
         {
             Vector2 mousePos = new Vector2();
@@ -83,12 +78,12 @@ public class Grid : MonoBehaviour {
 
             mousePos = new Vector3(Mathf.Round(mousePos.x), Mathf.Round(mousePos.y));
             
-
-            if (mousePos.x >= 0 && mousePos.y >= 0 && mousePos.x <= GridWidth && mousePos.y <= GridHeight)
+            GameObject mouseOverCell;
+            if(CellList.TryGetValue(new Position((int)mousePos.x, (int)mousePos.y), out mouseOverCell))
             {
-                GameObject mouseOverCell = GridList[(int)mousePos.x][(int)mousePos.y];
-                Debug.Log(mouseOverCell);
+                Debug.Log("Selected: " + mouseOverCell.name + " with neighbour cells: " + mouseOverCell.GetComponent<AsteroidCell>().cellN);
             }
+            
         }
     }
 
