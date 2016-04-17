@@ -10,14 +10,21 @@ public class Asteroid : MonoBehaviour {
     
     public Dictionary<Position, GameObject> AsteroidCells = new Dictionary<Position, GameObject>();
 
+    private bool mainAsteroid = false;
+    
+    public bool MainAsteroid {
+        get { return mainAsteroid; }
+        set { mainAsteroid = value;}
+    }
+    
+
     void Start()
     {
-
-
     }
 
     public void GenerateCellsForAsteroid()
     {
+
         int minX = int.MaxValue;
         int maxX = int.MinValue;
         int minY = int.MaxValue;
@@ -56,7 +63,7 @@ public class Asteroid : MonoBehaviour {
                     {
                         GameObject temp = Instantiate(AsteroidPrefab, new Vector2(x, y), Quaternion.identity) as GameObject;
                         temp.name = gameObject.name + ": " + x + " - " + y;
-                        
+                        temp.transform.parent = gameObject.transform;
                         AsteroidCells.Add(new Position(x, y), temp);
 
                         break;
@@ -65,7 +72,7 @@ public class Asteroid : MonoBehaviour {
             }
         }
 
-        foreach(KeyValuePair<Position, GameObject> cell in AsteroidCells)
+        foreach (KeyValuePair<Position, GameObject> cell in AsteroidCells)
         {
             CellNeighbours cellNeighbours = new CellNeighbours();
 
@@ -93,6 +100,9 @@ public class Asteroid : MonoBehaviour {
 
             cell.Value.GetComponent<AsteroidCell>().cellN = cellNeighbours;
         }
+
+
+
     }
     
 	void Update () {

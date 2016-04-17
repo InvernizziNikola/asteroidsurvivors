@@ -8,10 +8,8 @@ using System.Collections.Generic;
 public class Grid : MonoBehaviour {
     
     private Plane plane = new Plane(Vector3.forward, 0);
-    public int GridWidth = 100;
-    public int GridHeight = 100;
 
-    public GameObject StartingAsteroid;
+    public GameObject MainAsteroid;
 
     public List<GameObject> AsteroidList = new List<GameObject>();
 
@@ -19,23 +17,23 @@ public class Grid : MonoBehaviour {
 
 
     void Start ()
-    {
-
-        Profiler.BeginSample("MyPieceOfCode");
+    {        
         foreach (GameObject asteroid in GameObject.FindGameObjectsWithTag("Asteroid"))
         {
             if (!AsteroidList.Contains(asteroid))
                 AsteroidList.Add(asteroid);
-                
+            
+
             Asteroid asteroidScript = asteroid.GetComponent<Asteroid>();
             if (asteroidScript != null)
             {
+                if (asteroid == MainAsteroid)
+                    asteroidScript.MainAsteroid = true;
+
                 asteroidScript.GenerateCellsForAsteroid();
                 SetAsteroidCells(asteroidScript.AsteroidCells);
             }
         }
-
-        Profiler.EndSample();
     }
 
     public void SetAsteroidCells(Dictionary<Position, GameObject> cells)
@@ -89,7 +87,6 @@ public class Grid : MonoBehaviour {
 
     public void OnDrawGizmos()
     {
-        Gizmos.DrawWireCube(new Vector2(GridWidth/2.0f, GridHeight/2.0f), new Vector2(GridWidth, GridHeight));
     }
 }
 
