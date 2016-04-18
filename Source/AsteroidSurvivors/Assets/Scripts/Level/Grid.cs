@@ -88,5 +88,15 @@ public class Grid : MonoBehaviour {
     public void OnDrawGizmos()
     {
     }
+
+
+    public void Load()
+    {
+
+    }
+    public void Save()
+    {
+
+    }
 }
 

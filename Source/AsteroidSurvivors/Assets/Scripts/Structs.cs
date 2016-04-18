@@ -17,8 +17,8 @@ public struct Position
         this.x = x;
         this.y = y;
     }
-    int x;
-    int y;
+    public int x;
+    public int y;
     public Vector2 GetPosition()
     {
         return new Vector2(x, y);
@@ -63,4 +63,11 @@ public struct CellNeighbours
 
         return output;
     }
+}
+
+
+[System.Serializable]
+public struct SerializableAsteroid
+{
+
 }

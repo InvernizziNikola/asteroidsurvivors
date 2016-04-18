@@ -47,7 +47,7 @@ public class Asteroid : MonoBehaviour {
             if (pos.y + range > maxY)
                 maxY = (int)(pos.y + range);
         }
-
+        int count = 0;
         for (int x = minX - 2; x < maxX + 2; x++)
         {
             for (int y = minY - 2; y < maxY + 2; y++)
@@ -66,6 +66,11 @@ public class Asteroid : MonoBehaviour {
                         temp.transform.parent = gameObject.transform;
                         AsteroidCells.Add(new Position(x, y), temp);
 
+                        AsteroidCell cellScript = temp.GetComponent<AsteroidCell>();
+                        if (cellScript != null)
+                            cellScript.ID = count++;
+                        else
+                            Debug.LogWarning("Cell without Cellscript");
                         break;
                     }
                 }
@@ -98,11 +103,13 @@ public class Asteroid : MonoBehaviour {
                 cellNeighbours.HasBelow = true;
             }
 
-            cell.Value.GetComponent<AsteroidCell>().cellN = cellNeighbours;
+
+            AsteroidCell cellScript = cell.Value.GetComponent<AsteroidCell>();
+            if (cellScript != null)
+                cellScript.cellN = cellNeighbours;
+            else
+                Debug.LogWarning("Cell without Cellscript");
         }
-
-
-
     }
     
 	void Update () {
