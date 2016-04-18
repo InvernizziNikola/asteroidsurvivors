@@ -86,7 +86,7 @@ public class Asteroid : MonoBehaviour {
         PositionAndRangeList.Add(startPosRange);
 
 
-        float posRangeCount = (float)AsteroidSize;//Random.Range((float)AsteroidSize * 0.1f, (float)AsteroidSize * 0.2f);
+        float posRangeCount = (float)AsteroidSize / 2;//Random.Range((float)AsteroidSize * 0.1f, (float)AsteroidSize * 0.2f);
 
         for (int i = 0; i < posRangeCount; i++)
         {
@@ -97,18 +97,18 @@ public class Asteroid : MonoBehaviour {
             bool redo = true;
             do
             {
-                tempRange = Random.Range(astSize / 4.0f, astSize / 3.0f);
+                tempRange = Random.Range(astSize / 5.0f, astSize / 2.0f);
                 tempPos = new Vector2(Random.Range(-astSize - tempRange, astSize - tempRange), Random.Range(-astSize - tempRange, astSize - tempRange));
 
                 foreach (PosRange pR in PositionAndRangeList)
                 {
-                    if (tempPos.x - tempRange > -astSize && tempPos.y - tempRange > -astSize && tempPos.x + tempRange < astSize && tempPos.y + tempRange < astSize)
-                    {
-                        if (Vector2.Distance(pR.position, tempPos) < tempRange + pR.range)
+                    //if (tempPos.x - tempRange > -astSize && tempPos.y - tempRange > -astSize && tempPos.x + tempRange < astSize && tempPos.y + tempRange < astSize)
+                    //{
+                        if (Vector2.Distance(pR.position, tempPos) < tempRange + pR.range + 1)
                         {
                             redo = false;
                         }
-                    }
+                    //}
                 }
             }
             while (redo);
@@ -163,7 +163,6 @@ public class Asteroid : MonoBehaviour {
                     {
                         GameObject temp = Instantiate(AsteroidCellPrefab, new Vector2(x, y), Quaternion.identity) as GameObject;
                         temp.name = gameObject.name + ": " + x + " - " + y;
-                        temp.transform.parent = gameObject.transform;
                         AsteroidCells.Add(new Position(x, y), temp);
 
                         AsteroidCell cellScript = temp.GetComponent<AsteroidCell>();
@@ -303,9 +302,8 @@ public class Asteroid : MonoBehaviour {
             else
                 Debug.LogWarning("Cell without Cellscript");
         }
-
-
-        gameObject.name = "Asteroid " + ID + " (" + AsteroidCells.Count + ")";        
+        gameObject.name = "Asteroid " + ID + " (" + AsteroidCells.Count + ")";
+        
     }
     
 	void Update () {
@@ -317,8 +315,6 @@ public class Asteroid : MonoBehaviour {
 
     void OnDrawGizmos()
     {
-
-
         Gizmos.color = Color.green;
         foreach (KeyValuePair<Position, GameObject> cell in AsteroidCells)
         {
@@ -330,7 +326,7 @@ public class Asteroid : MonoBehaviour {
 
         foreach (PosRange posRangeItem in PositionAndRangeList)
         {
-            //Gizmos.DrawWireSphere(new Vector2(posRangeItem.position.x + transform.position.x, posRangeItem.position.y + transform.position.y), posRangeItem.range);
+            Gizmos.DrawWireSphere(new Vector2(posRangeItem.position.x + transform.position.x, posRangeItem.position.y + transform.position.y), posRangeItem.range);
         }        
     }
 }
