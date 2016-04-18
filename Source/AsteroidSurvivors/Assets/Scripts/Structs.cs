@@ -3,8 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 [System.Serializable]
-public struct posRange
+public struct PosRange
 {
+    public PosRange(float range, Vector2 position)
+    {
+        this.range = range;
+        this.position = position;
+    }
     public float range;
     public Vector2 position;
 }
