@@ -6,19 +6,21 @@ public class Asteroid : MonoBehaviour {
 
     public enum AstSize
     {
-        Small = 5, // max cells = 100
-        Normal = 8,  // max cells = 256
-        Big = 12, // max cells = 576
-        Huge = 18 // max cells = 1296
+        Small = 5,
+        Normal = 7, 
+        Big = 10,
+        Huge = 14
     }
 
+    public Texture2D AsteroidTexture;
 
+    private List<Sprite> AsteroidSpritePieces = new List<Sprite>();
 
     public AstSize AsteroidSize = AstSize.Small;
 
-    public GameObject AsteroidPrefab;
+    public GameObject AsteroidCellPrefab;
 
-    public List<PosRange> PositionAndRangeList = new List<PosRange>();
+    private List<PosRange> PositionAndRangeList = new List<PosRange>();
     
     public Dictionary<Position, GameObject> AsteroidCells = new Dictionary<Position, GameObject>();
 
@@ -35,10 +37,35 @@ public class Asteroid : MonoBehaviour {
     {
         GeneratePosRangeList();
 
+        GenerateSpritesList();
     }
     void Start()
     {
     }
+
+    private void GenerateSpritesList()
+    {
+        float rows = 3;
+        float columns = 3;
+        for (float y = 0; y < columns; y++)
+        {
+            for (float x = 0; x < rows; x++)
+            {
+                Sprite tempSprite = Sprite.Create(AsteroidTexture, 
+                    new Rect(
+                        x * ((float)AsteroidTexture.width / columns), 
+                        y * ((float)AsteroidTexture.height / rows),
+                        ((float)AsteroidTexture.width / columns), 
+                        ((float)AsteroidTexture.height / rows)), 
+                    new Vector2(0.5f,0.5f),
+                    512); 
+                
+                tempSprite.name = x + " - " + y;
+                AsteroidSpritePieces.Add(tempSprite);
+            }
+        }
+    }
+
     public void Regenerate()
     {
         GeneratePosRangeList();
@@ -48,18 +75,18 @@ public class Asteroid : MonoBehaviour {
     {
         PositionAndRangeList.Clear();
 
-        float astSize = (float)AsteroidSize;
 
+        float astSize = (float)AsteroidSize;
 
         Vector2 tempStartPos = Vector2.zero; //new Vector2(Random.Range(-2.0f, 2.0f), Random.Range(-2.0f, 2.0f));
 
-        float tempStartRange = Random.Range(astSize / 2.0f, astSize / 1.5f);
+        float tempStartRange = Random.Range(astSize / 4.0f, astSize / 2.0f);
 
         PosRange startPosRange = new PosRange(tempStartRange, tempStartPos);
         PositionAndRangeList.Add(startPosRange);
 
 
-        float posRangeCount = Random.Range((float)AsteroidSize * 0.1f, (float)AsteroidSize * 0.2f);
+        float posRangeCount = (float)AsteroidSize;//Random.Range((float)AsteroidSize * 0.1f, (float)AsteroidSize * 0.2f);
 
         for (int i = 0; i < posRangeCount; i++)
         {
@@ -98,7 +125,6 @@ public class Asteroid : MonoBehaviour {
         }
         AsteroidCells.Clear();
 
-
         int minX = int.MaxValue;
         int maxX = int.MinValue;
         int minY = int.MaxValue;
@@ -135,7 +161,7 @@ public class Asteroid : MonoBehaviour {
 
                     if (closestPointDist < posRangeItem.range)
                     {
-                        GameObject temp = Instantiate(AsteroidPrefab, new Vector2(x, y), Quaternion.identity) as GameObject;
+                        GameObject temp = Instantiate(AsteroidCellPrefab, new Vector2(x, y), Quaternion.identity) as GameObject;
                         temp.name = gameObject.name + ": " + x + " - " + y;
                         temp.transform.parent = gameObject.transform;
                         AsteroidCells.Add(new Position(x, y), temp);
@@ -150,12 +176,32 @@ public class Asteroid : MonoBehaviour {
                 }
             }
         }
-
+        
         foreach (KeyValuePair<Position, GameObject> cell in AsteroidCells)
         {
             CellNeighbours cellNeighbours = new CellNeighbours();
 
             GameObject neighbour;
+
+            // top layer cell neighbours
+            if (AsteroidCells.TryGetValue(cell.Key + new Position(-1, 1), out neighbour))
+            {
+                cellNeighbours.LeftAbove = new KeyValuePair<Position, GameObject>(cell.Key + new Position(-1, 1), neighbour);
+                cellNeighbours.HasLeftAbove = true;
+            }
+            if (AsteroidCells.TryGetValue(cell.Key + new Position(0, 1), out neighbour))
+            {
+                cellNeighbours.Above = new KeyValuePair<Position, GameObject>(cell.Key + new Position(0, 1), neighbour);
+                cellNeighbours.HasAbove = true;
+            }
+
+            if (AsteroidCells.TryGetValue(cell.Key + new Position(1, 1), out neighbour))
+            {
+                cellNeighbours.RightAbove = new KeyValuePair<Position, GameObject>(cell.Key + new Position(1, 1), neighbour);
+                cellNeighbours.HasRightAbove = true;
+            }
+
+            // middle layer cell neighbours
             if (AsteroidCells.TryGetValue(cell.Key + new Position(-1, 0), out neighbour))
             {
                 cellNeighbours.Left = new KeyValuePair<Position, GameObject>(cell.Key + new Position(-1, 0), neighbour);
@@ -166,30 +212,107 @@ public class Asteroid : MonoBehaviour {
                 cellNeighbours.Right = new KeyValuePair<Position, GameObject>(cell.Key + new Position(1, 0), neighbour);
                 cellNeighbours.HasRight = true;
             }
-            if (AsteroidCells.TryGetValue(cell.Key + new Position(0, 1), out neighbour))
+            
+            // bottom layer cell neighbours
+            if (AsteroidCells.TryGetValue(cell.Key + new Position(-1, -1), out neighbour))
             {
-                cellNeighbours.Above = new KeyValuePair<Position, GameObject>(cell.Key + new Position(0, 1), neighbour);
-                cellNeighbours.HasAbove = true;
+                cellNeighbours.LeftBelow = new KeyValuePair<Position, GameObject>(cell.Key + new Position(-1, -1), neighbour);
+                cellNeighbours.HasLeftBelow = true;
             }
             if (AsteroidCells.TryGetValue(cell.Key + new Position(0, -1), out neighbour))
             {
                 cellNeighbours.Below = new KeyValuePair<Position, GameObject>(cell.Key + new Position(0, -1), neighbour);
                 cellNeighbours.HasBelow = true;
             }
-
+            if (AsteroidCells.TryGetValue(cell.Key + new Position(1, -1), out neighbour))
+            {
+                cellNeighbours.RightBelow = new KeyValuePair<Position, GameObject>(cell.Key + new Position(1, -1), neighbour);
+                cellNeighbours.HasRightBelow = true;
+            }
 
             AsteroidCell cellScript = cell.Value.GetComponent<AsteroidCell>();
             if (cellScript != null)
+            {
                 cellScript.cellN = cellNeighbours;
+
+                // TODO ADD ALL OPTIONS!
+                if (cellNeighbours.HasAbove == false
+                    && cellNeighbours.HasLeft == false && cellNeighbours.HasRight == true
+                    && cellNeighbours.HasBelow == true)
+                {
+                    cellScript.AsteroidSprite = AsteroidSpritePieces[0];
+                }
+                else if (cellNeighbours.HasAbove == false
+                    && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == true
+                    && cellNeighbours.HasBelow == true)
+                {
+                    cellScript.AsteroidSprite = AsteroidSpritePieces[1];
+                }
+                else if (cellNeighbours.HasAbove == false
+                    && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == false
+                    && cellNeighbours.HasBelow == true)
+                {
+                    cellScript.AsteroidSprite = AsteroidSpritePieces[2];
+                }
+                else if (cellNeighbours.HasAbove == true
+                   && cellNeighbours.HasLeft == false && cellNeighbours.HasRight == true
+                       && cellNeighbours.HasBelow == true)
+                {
+                    cellScript.AsteroidSprite = AsteroidSpritePieces[3];
+                }
+                else if (cellNeighbours.HasAbove == true
+                   && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == true
+                       && cellNeighbours.HasBelow == true)
+                {
+                    cellScript.AsteroidSprite = AsteroidSpritePieces[4];
+                }
+                else if (cellNeighbours.HasAbove == true
+                   && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == false
+                       && cellNeighbours.HasBelow == true)
+                {
+                    cellScript.AsteroidSprite = AsteroidSpritePieces[5];
+                }
+                else if (cellNeighbours.HasAbove == true
+                   && cellNeighbours.HasLeft == false && cellNeighbours.HasRight == true
+                       && cellNeighbours.HasBelow == false)
+                {
+                    cellScript.AsteroidSprite = AsteroidSpritePieces[6];
+                }
+                else if (cellNeighbours.HasAbove == true
+                   && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == true
+                       && cellNeighbours.HasBelow == false)
+                {
+                    cellScript.AsteroidSprite = AsteroidSpritePieces[7];
+                }
+                else if (cellNeighbours.HasAbove == true
+                   && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == false
+                       && cellNeighbours.HasBelow == false)
+                {
+                    cellScript.AsteroidSprite = AsteroidSpritePieces[8];
+                }
+                else
+                {
+                    // put middle piece if none is selected
+                    cellScript.AsteroidSprite = AsteroidSpritePieces[4];
+                }
+
+
+                cellScript.SetSpriteRenderer();
+
+            }
             else
                 Debug.LogWarning("Cell without Cellscript");
         }
 
-        gameObject.name = "Asteroid " + ID + " (" + AsteroidCells.Count + ")";
+
+        gameObject.name = "Asteroid " + ID + " (" + AsteroidCells.Count + ")";        
     }
     
 	void Update () {
-	
+	    if(Input.GetKeyDown(KeyCode.R))
+        {
+            Regenerate();
+        }
 	}
 
     void OnDrawGizmos()
