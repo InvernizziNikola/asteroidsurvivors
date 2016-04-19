@@ -20,7 +20,7 @@ public class Asteroid : MonoBehaviour {
 
     public GameObject AsteroidCellPrefab;
 
-    private List<PosRange> PositionAndRangeList = new List<PosRange>();
+    public List<PosRange> PositionAndRangeList = new List<PosRange>();
     
     public Dictionary<Position, GameObject> AsteroidCells = new Dictionary<Position, GameObject>();
 
@@ -86,7 +86,7 @@ public class Asteroid : MonoBehaviour {
         PositionAndRangeList.Add(startPosRange);
 
 
-        float posRangeCount = (float)AsteroidSize / 2;//Random.Range((float)AsteroidSize * 0.1f, (float)AsteroidSize * 0.2f);
+        float posRangeCount = (float)AsteroidSize / 4;//Random.Range((float)AsteroidSize * 0.1f, (float)AsteroidSize * 0.2f);
 
         for (int i = 0; i < posRangeCount; i++)
         {
@@ -102,13 +102,13 @@ public class Asteroid : MonoBehaviour {
 
                 foreach (PosRange pR in PositionAndRangeList)
                 {
-                    //if (tempPos.x - tempRange > -astSize && tempPos.y - tempRange > -astSize && tempPos.x + tempRange < astSize && tempPos.y + tempRange < astSize)
-                    //{
-                        if (Vector2.Distance(pR.position, tempPos) < tempRange + pR.range + 1)
-                        {
-                            redo = false;
-                        }
-                    //}
+                    if (tempPos.x - tempRange > -astSize && tempPos.y - tempRange > -astSize && tempPos.x + tempRange < astSize && tempPos.y + tempRange < astSize)
+                    {
+                      if (Vector2.Distance(pR.position, tempPos) < tempRange + pR.range + 1)
+                      {
+                          redo = false;
+                      }
+                    }
                 }
             }
             while (redo);
@@ -322,7 +322,7 @@ public class Asteroid : MonoBehaviour {
         }
         Gizmos.color = Color.red;
 
-        Gizmos.DrawWireSphere(transform.position, (float)AsteroidSize);
+        Gizmos.DrawWireCube(transform.position, new Vector2((float)AsteroidSize*2, (float)AsteroidSize*2));
 
         foreach (PosRange posRangeItem in PositionAndRangeList)
         {

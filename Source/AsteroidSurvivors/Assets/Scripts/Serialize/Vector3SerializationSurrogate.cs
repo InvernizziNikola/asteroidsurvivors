@@ -12,6 +12,7 @@ sealed class Vector3SerializationSurrogate : ISerializationSurrogate
         info.AddValue("x", v3.x);
         info.AddValue("y", v3.y);
         info.AddValue("z", v3.z);
+        
     }
 
     // Method called to deserialize a Vector3 object

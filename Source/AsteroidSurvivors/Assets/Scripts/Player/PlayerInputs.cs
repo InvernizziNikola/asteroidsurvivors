@@ -9,15 +9,16 @@ public class PlayerInputs : MonoBehaviour {
 
 
     public List<Vector3> test = new List<Vector3>();
-    
-	// Use this for initialization
-	void Start ()
-    {
+
+    // Use this for initialization
+    void Start()
+    {     
     }
 	
 	// Update is called once per frame
 	void Update () {
 
+       
         if (Input.GetKeyUp(KeyCode.L))
         {
             IFormatter bf = new BinaryFormatter();
@@ -40,12 +41,12 @@ public class PlayerInputs : MonoBehaviour {
             stream.Close();
 
 
-            /*
-            IFormatter formatter = new BinaryFormatter();
-            Stream stream = new FileStream("MyFile.bin", FileMode.Open, FileAccess.Read, FileShare.Read);
-            test = (List<Position>)formatter.Deserialize(stream);
-            stream.Close();
-            */
+            
+           // IFormatter formatter = new BinaryFormatter();
+           // Stream stream = new FileStream("MyFile.bin", FileMode.Open, FileAccess.Read, FileShare.Read);
+           // test = (List<Position>)formatter.Deserialize(stream);
+           // stream.Close();
+            
         }
 
         if (Input.GetKeyUp(KeyCode.S))
@@ -66,13 +67,15 @@ public class PlayerInputs : MonoBehaviour {
             bf.Serialize(stream, test);
             stream.Close();
 
-            /*
-            IFormatter formatter = new BinaryFormatter();
-            Stream stream = new FileStream("MyFile.bin", FileMode.Create, FileAccess.Write, FileShare.None);
-            formatter.Serialize(stream, test);
-            stream.Close();
-            */
+            
+           // IFormatter formatter = new BinaryFormatter();
+           // Stream stream = new FileStream("MyFile.bin", FileMode.Create, FileAccess.Write, FileShare.None);
+           // formatter.Serialize(stream, test);
+           // stream.Close();
+            
         }
+        
 
     }
+    
 }
