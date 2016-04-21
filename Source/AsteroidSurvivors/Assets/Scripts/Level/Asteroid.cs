@@ -104,10 +104,10 @@ public class Asteroid : MonoBehaviour {
                 {
                     if (tempPos.x - tempRange > -astSize && tempPos.y - tempRange > -astSize && tempPos.x + tempRange < astSize && tempPos.y + tempRange < astSize)
                     {
-                      if (Vector2.Distance(pR.position, tempPos) < tempRange + pR.range + 1)
-                      {
-                          redo = false;
-                      }
+                        if (Vector2.Distance(pR.position, tempPos) < tempRange + pR.range + 1)
+                        {
+                            redo = false;
+                        }
                     }
                 }
             }
