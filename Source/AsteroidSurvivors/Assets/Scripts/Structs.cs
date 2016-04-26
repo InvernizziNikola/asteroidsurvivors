@@ -37,52 +37,43 @@ public struct Position
         return new Position(p1.x + p2.x, p1.y + p2.y);
     }
 }
+[System.Serializable]
+public struct KeyValuePairSerializable<K, V>
+{
+    public KeyValuePairSerializable(K k, V v)
+    {
+        Key = k;
+        Value = v;
+    }
+
+    public K Key { get; set; }
+    public V Value { get; set; }
+}
 
 [System.Serializable]
 public struct CellNeighbours
 {
     // TOP LAYER
-    public KeyValuePair<Position, GameObject> LeftAbove;
+    public KeyValuePairSerializable<Position, GameObject> LeftAbove;
     public bool HasLeftAbove;
-    public KeyValuePair<Position, GameObject> Above;
+    public KeyValuePairSerializable<Position, GameObject> Above;
     public bool HasAbove;
-    public KeyValuePair<Position, GameObject> RightAbove;
+    public KeyValuePairSerializable<Position, GameObject> RightAbove;
     public bool HasRightAbove;
     
     // MIDDLE LAYER
-    public KeyValuePair<Position, GameObject> Left;
+    public KeyValuePairSerializable<Position, GameObject> Left;
     public bool HasLeft;
-    public KeyValuePair<Position, GameObject> Right;
+    public KeyValuePairSerializable<Position, GameObject> Right;
     public bool HasRight;
 
     // BOTTOM LAYER
-    public KeyValuePair<Position, GameObject> LeftBelow;
+    public KeyValuePairSerializable<Position, GameObject> LeftBelow;
     public bool HasLeftBelow;
-    public KeyValuePair<Position, GameObject> Below;
+    public KeyValuePairSerializable<Position, GameObject> Below;
     public bool HasBelow;
-    public KeyValuePair<Position, GameObject> RightBelow;
+    public KeyValuePairSerializable<Position, GameObject> RightBelow;
     public bool HasRightBelow;
-
-
-
-
-
-
-
-    public override string ToString()
-    {
-        string output = "";
-        if (HasAbove)
-            output += " Above:" + Above.Key;
-        if (HasRight)
-            output += " Right:" + Right.Key;
-        if (HasBelow)
-            output += " Below:" + Below.Key;
-        if (HasLeft)
-            output += " Left:" + Left.Key;
-
-        return output;
-    }
 }
 
 

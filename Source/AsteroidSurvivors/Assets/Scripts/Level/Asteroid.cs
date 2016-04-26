@@ -13,7 +13,7 @@ public class Asteroid : MonoBehaviour {
     }
 
     public Texture2D AsteroidTexture;
-
+    public Material AsteroidMaterial;
     private List<Sprite> AsteroidSpritePieces = new List<Sprite>();
 
     public AstSize AsteroidSize = AstSize.Small;
@@ -163,6 +163,7 @@ public class Asteroid : MonoBehaviour {
                     {
                         GameObject temp = Instantiate(AsteroidCellPrefab, new Vector2(x, y), Quaternion.identity) as GameObject;
                         temp.name = gameObject.name + ": " + x + " - " + y;
+
                         AsteroidCells.Add(new Position(x, y), temp);
 
                         AsteroidCell cellScript = temp.GetComponent<AsteroidCell>();
@@ -185,53 +186,55 @@ public class Asteroid : MonoBehaviour {
             // top layer cell neighbours
             if (AsteroidCells.TryGetValue(cell.Key + new Position(-1, 1), out neighbour))
             {
-                cellNeighbours.LeftAbove = new KeyValuePair<Position, GameObject>(cell.Key + new Position(-1, 1), neighbour);
+                cellNeighbours.LeftAbove = new KeyValuePairSerializable<Position, GameObject>(cell.Key + new Position(-1, 1), neighbour);
                 cellNeighbours.HasLeftAbove = true;
             }
             if (AsteroidCells.TryGetValue(cell.Key + new Position(0, 1), out neighbour))
             {
-                cellNeighbours.Above = new KeyValuePair<Position, GameObject>(cell.Key + new Position(0, 1), neighbour);
+                cellNeighbours.Above = new KeyValuePairSerializable<Position, GameObject>(cell.Key + new Position(0, 1), neighbour);
                 cellNeighbours.HasAbove = true;
             }
 
             if (AsteroidCells.TryGetValue(cell.Key + new Position(1, 1), out neighbour))
             {
-                cellNeighbours.RightAbove = new KeyValuePair<Position, GameObject>(cell.Key + new Position(1, 1), neighbour);
+                cellNeighbours.RightAbove = new KeyValuePairSerializable<Position, GameObject>(cell.Key + new Position(1, 1), neighbour);
                 cellNeighbours.HasRightAbove = true;
             }
 
             // middle layer cell neighbours
             if (AsteroidCells.TryGetValue(cell.Key + new Position(-1, 0), out neighbour))
             {
-                cellNeighbours.Left = new KeyValuePair<Position, GameObject>(cell.Key + new Position(-1, 0), neighbour);
+                cellNeighbours.Left = new KeyValuePairSerializable<Position, GameObject>(cell.Key + new Position(-1, 0), neighbour);
                 cellNeighbours.HasLeft = true;
             }
             if (AsteroidCells.TryGetValue(cell.Key + new Position(1, 0), out neighbour))
             {
-                cellNeighbours.Right = new KeyValuePair<Position, GameObject>(cell.Key + new Position(1, 0), neighbour);
+                cellNeighbours.Right = new KeyValuePairSerializable<Position, GameObject>(cell.Key + new Position(1, 0), neighbour);
                 cellNeighbours.HasRight = true;
             }
             
             // bottom layer cell neighbours
             if (AsteroidCells.TryGetValue(cell.Key + new Position(-1, -1), out neighbour))
             {
-                cellNeighbours.LeftBelow = new KeyValuePair<Position, GameObject>(cell.Key + new Position(-1, -1), neighbour);
+                cellNeighbours.LeftBelow = new KeyValuePairSerializable<Position, GameObject>(cell.Key + new Position(-1, -1), neighbour);
                 cellNeighbours.HasLeftBelow = true;
             }
             if (AsteroidCells.TryGetValue(cell.Key + new Position(0, -1), out neighbour))
             {
-                cellNeighbours.Below = new KeyValuePair<Position, GameObject>(cell.Key + new Position(0, -1), neighbour);
+                cellNeighbours.Below = new KeyValuePairSerializable<Position, GameObject>(cell.Key + new Position(0, -1), neighbour);
                 cellNeighbours.HasBelow = true;
             }
             if (AsteroidCells.TryGetValue(cell.Key + new Position(1, -1), out neighbour))
             {
-                cellNeighbours.RightBelow = new KeyValuePair<Position, GameObject>(cell.Key + new Position(1, -1), neighbour);
+                cellNeighbours.RightBelow = new KeyValuePairSerializable<Position, GameObject>(cell.Key + new Position(1, -1), neighbour);
                 cellNeighbours.HasRightBelow = true;
             }
 
             AsteroidCell cellScript = cell.Value.GetComponent<AsteroidCell>();
+            SpriteRenderer cellRenderer = cell.Value.GetComponent<SpriteRenderer>();
             if (cellScript != null)
             {
+
                 cellScript.cellN = cellNeighbours;
 
                 // TODO ADD ALL OPTIONS!
@@ -239,65 +242,62 @@ public class Asteroid : MonoBehaviour {
                     && cellNeighbours.HasLeft == false && cellNeighbours.HasRight == true
                     && cellNeighbours.HasBelow == true)
                 {
-                    cellScript.AsteroidSprite = AsteroidSpritePieces[0];
+                    cellRenderer.sprite = AsteroidSpritePieces[0];
                 }
                 else if (cellNeighbours.HasAbove == false
                     && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == true
                     && cellNeighbours.HasBelow == true)
                 {
-                    cellScript.AsteroidSprite = AsteroidSpritePieces[1];
+                    cellRenderer.sprite = AsteroidSpritePieces[1];
                 }
                 else if (cellNeighbours.HasAbove == false
                     && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == false
                     && cellNeighbours.HasBelow == true)
                 {
-                    cellScript.AsteroidSprite = AsteroidSpritePieces[2];
+                    cellRenderer.sprite = AsteroidSpritePieces[2];
                 }
                 else if (cellNeighbours.HasAbove == true
                    && cellNeighbours.HasLeft == false && cellNeighbours.HasRight == true
                        && cellNeighbours.HasBelow == true)
                 {
-                    cellScript.AsteroidSprite = AsteroidSpritePieces[3];
+                    cellRenderer.sprite = AsteroidSpritePieces[3];
                 }
                 else if (cellNeighbours.HasAbove == true
                    && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == true
                        && cellNeighbours.HasBelow == true)
                 {
-                    cellScript.AsteroidSprite = AsteroidSpritePieces[4];
+                    cellRenderer.sprite = AsteroidSpritePieces[4];
                 }
                 else if (cellNeighbours.HasAbove == true
                    && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == false
                        && cellNeighbours.HasBelow == true)
                 {
-                    cellScript.AsteroidSprite = AsteroidSpritePieces[5];
+                    cellRenderer.sprite = AsteroidSpritePieces[5];
                 }
                 else if (cellNeighbours.HasAbove == true
                    && cellNeighbours.HasLeft == false && cellNeighbours.HasRight == true
                        && cellNeighbours.HasBelow == false)
                 {
-                    cellScript.AsteroidSprite = AsteroidSpritePieces[6];
+                    cellRenderer.sprite = AsteroidSpritePieces[6];
                 }
                 else if (cellNeighbours.HasAbove == true
                    && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == true
                        && cellNeighbours.HasBelow == false)
                 {
-                    cellScript.AsteroidSprite = AsteroidSpritePieces[7];
+                    cellRenderer.sprite = AsteroidSpritePieces[7];
                 }
                 else if (cellNeighbours.HasAbove == true
                    && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == false
                        && cellNeighbours.HasBelow == false)
                 {
-                    cellScript.AsteroidSprite = AsteroidSpritePieces[8];
+                    cellRenderer.sprite = AsteroidSpritePieces[8];
                 }
                 else
                 {
                     // put middle piece if none is selected
-                    cellScript.AsteroidSprite = AsteroidSpritePieces[4];
+                    cellRenderer.sprite = AsteroidSpritePieces[4];
                 }
-
-
-                cellScript.SetSpriteRenderer();
-
+                cellRenderer.material = AsteroidMaterial;
             }
             else
                 Debug.LogWarning("Cell without Cellscript");
@@ -312,6 +312,20 @@ public class Asteroid : MonoBehaviour {
             Regenerate();
         }
 	}
+
+
+
+    public void Save()
+    {
+
+    }
+
+
+
+
+
+
+
 
     void OnDrawGizmos()
     {
