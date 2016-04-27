@@ -20,15 +20,15 @@ public class PlayerInputs : MonoBehaviour {
 
     public void ShowAir()
     {
-
+        Debug.Log("AIR");
     }
     public void ShowPower()
     {
-
+        Debug.Log("Power");
     }
     public void ShowWater()
     {
-
+        Debug.Log("Water");
     }
 
     public void ShowBuildingList()
