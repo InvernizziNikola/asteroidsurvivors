@@ -24,14 +24,6 @@ public class Asteroid : MonoBehaviour {
     
     public Dictionary<Position, GameObject> AsteroidCells = new Dictionary<Position, GameObject>();
 
-    private bool mainAsteroid = false;
-
-    public int ID = -1;
-
-    public bool MainAsteroid {
-        get { return mainAsteroid; }
-        set { mainAsteroid = value;}
-    }
 
     void Awake()
     {
@@ -302,7 +294,7 @@ public class Asteroid : MonoBehaviour {
             else
                 Debug.LogWarning("Cell without Cellscript");
         }
-        gameObject.name = "Asteroid " + ID + " (" + AsteroidCells.Count + ")";
+        gameObject.name = "Asteroid (" + AsteroidCells.Count + ")";
         
     }
     

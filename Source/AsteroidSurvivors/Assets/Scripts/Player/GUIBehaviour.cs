@@ -8,23 +8,42 @@ public class GUIBehaviour : MonoBehaviour {
     public GameObject BuildButton;
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+    {
 	
 	}
 	
 	// Update is called once per frame
-	void Update () {
-	
-	}
+	void Update ()
+    {
+    }
 
-    public void CloseMenuBuildings()
+    public void HideMenuBuildings()
     {
         BuildButton.SetActive(true);
         MenuBuildings.SetActive(false);
     }
-    public void OpenMenuBuildings()
+    public void ShowMenuBuildings()
     {
         MenuBuildings.SetActive(true);
         BuildButton.SetActive(false);
+    }
+
+    public void ShowAir()
+    {
+        Debug.Log("AIR");
+    }
+    public void ShowPower()
+    {
+        Debug.Log("Power");
+    }
+    public void ShowWater()
+    {
+        Debug.Log("Water");
+    }
+
+    public void ShowCharacters()
+    {
+
     }
 }
