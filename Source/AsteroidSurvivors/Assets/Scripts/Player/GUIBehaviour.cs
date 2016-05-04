@@ -7,15 +7,18 @@ public class GUIBehaviour : MonoBehaviour {
     public GameObject MenuBuildings;
     public GameObject BuildButton;
 
+    public Button button;
+
 	// Use this for initialization
 	void Start ()
     {
-	
-	}
+        button.onClick.AddListener(delegate { ShowCharacters(); });
+    }
 	
 	// Update is called once per frame
 	void Update ()
     {
+
     }
 
     public void HideMenuBuildings()
@@ -44,6 +47,7 @@ public class GUIBehaviour : MonoBehaviour {
 
     public void ShowCharacters()
     {
+        Debug.Log("Characters");
 
     }
 }

@@ -1,6 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+public enum AstSize
+{
+    Small = 5,
+    Normal = 7,
+    Big = 10,
+    Huge = 14
+}
 
 [System.Serializable]
 public struct PosRange

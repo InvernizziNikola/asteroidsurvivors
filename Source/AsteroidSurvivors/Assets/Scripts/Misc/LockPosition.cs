@@ -11,7 +11,7 @@ public class LockPosition : MonoBehaviour
     void Start()
     {
         startPos = transform.position;
-        InvokeRepeating("CheckPosition", 5, 5);
+        InvokeRepeating("CheckPosition", 2, 2);
     }
 
     // Update is called once per frame

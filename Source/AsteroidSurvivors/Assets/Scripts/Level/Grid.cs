@@ -5,14 +5,21 @@ using System.Collections.Generic;
 
 
 
-public class Grid : MonoBehaviour {
+public class Grid {
 
-    public GameObject prefabAsteroid;
+    private static Grid gridInstant;
+    public static Grid GetInstant
+    {
+        get
+        {
+            if (gridInstant == null)
+                gridInstant = new Grid();
+            return gridInstant;
+        }
 
-    public List<GameObject> AsteroidList = new List<GameObject>();
+    }
     
-    public GameObject selectedAsteroid;
-
+    private GameObject selectedAsteroid;
     public GameObject SelectedAsteroid
     {
         get
@@ -25,37 +32,25 @@ public class Grid : MonoBehaviour {
         }
     }
 
-    void Start ()
+    private Grid()
     {
-        if (prefabAsteroid != null)
-        {
-            GameObject tempAsteroid = Instantiate(prefabAsteroid) as GameObject;
-            tempAsteroid.transform.position = new Vector3(0, 0);
-            tempAsteroid.GetComponent<Asteroid>().GenerateCellsForAsteroid();
+        // private constructor so nobody can create a new grid
+    }
 
+    private List<GameObject> AsteroidList = new List<GameObject>();
 
-            AddAsteroid(tempAsteroid);
+    public GameObject GetCellFromCoordinates(Position coordinates)
+    {
+        Asteroid astScript = selectedAsteroid.GetComponent<Asteroid>();
+        if (astScript == null)
+            return null;
 
-            // just make the first asteroid the selectedasteroid!
-            selectedAsteroid = tempAsteroid;
-        }
-    }    
-
+        return astScript.GetCellFromCoordinates(coordinates);
+    }
     public void AddAsteroid(GameObject newAsteroid)
     {
         AsteroidList.Add(newAsteroid);
     }
-   
-
-    void Update()
-    {
-        
-    }
-
-    public void OnDrawGizmos()
-    {
-    }
-
 
     public void Load()
     {
@@ -63,74 +58,7 @@ public class Grid : MonoBehaviour {
     }
     public void Save()
     {
-
-        /*
-        if (Input.GetKeyUp(KeyCode.L))
-        {
-            IFormatter bf = new BinaryFormatter();
-
-            // 1. Construct a SurrogateSelector object
-            SurrogateSelector ss = new SurrogateSelector();
-
-            // create surrogate
-            Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
-
-            // add surrogate
-            ss.AddSurrogate(typeof(Vector3), new StreamingContext(StreamingContextStates.All), v3ss);
-
-            // 2. Have the formatter use our surrogate selector
-            bf.SurrogateSelector = ss;
-
-            // normal deserialization
-            Stream stream = new FileStream("MyFile.bin", FileMode.Open, FileAccess.Read, FileShare.Read);
-            test = (List<Vector3>)bf.Deserialize(stream);
-            stream.Close();
-
-
-
-            // IFormatter formatter = new BinaryFormatter();
-            // Stream stream = new FileStream("MyFile.bin", FileMode.Open, FileAccess.Read, FileShare.Read);
-            // test = (List<Position>)formatter.Deserialize(stream);
-            // stream.Close();
-
-        }
-
-        if (Input.GetKeyUp(KeyCode.S))
-        {
-
-            IFormatter bf = new BinaryFormatter();
-
-            // 1. Construct a SurrogateSelector object
-            SurrogateSelector ss = new SurrogateSelector();
-
-            Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
-            ss.AddSurrogate(typeof(Vector3), new StreamingContext(StreamingContextStates.All), v3ss);
-
-            // 2. Have the formatter use our surrogate selector
-            bf.SurrogateSelector = ss;
-
-            Stream stream = new FileStream("MyFile.bin", FileMode.Create, FileAccess.Write, FileShare.None);
-            bf.Serialize(stream, test);
-            stream.Close();
-
-
-            // IFormatter formatter = new BinaryFormatter();
-            // Stream stream = new FileStream("MyFile.bin", FileMode.Create, FileAccess.Write, FileShare.None);
-            // formatter.Serialize(stream, test);
-            // stream.Close();
-
-        }
-        foreach (GameObject asteroid in AsteroidList)
-        {
-            Asteroid asteroidData = asteroid.GetComponent<Asteroid>();
-            if (asteroidData != null)
-            {
-
-
-
-            }
-        }
-        */
+       
     }
 }
 

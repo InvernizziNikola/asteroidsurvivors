@@ -21,33 +21,35 @@ public class PlayerInputs : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (EventSystem.current.IsPointerOverGameObject())
-            return;
+        bool overUI = EventSystem.current.IsPointerOverGameObject();
 
         if (Input.GetMouseButtonDown(0))
         {
-            Vector2 mousePos = new Vector2();
-
-            float dist;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-            if (plane.Raycast(ray, out dist))
+            if (!overUI)
             {
-                mousePos = ray.GetPoint(dist);
+                Vector2 mousePos = new Vector2();
+
+                float dist;
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                if (plane.Raycast(ray, out dist))
+                {
+                    mousePos = ray.GetPoint(dist);
+                }
+
+                mousePos = new Vector3(Mathf.Round(mousePos.x), Mathf.Round(mousePos.y));
+
+
+
+                GameObject mouseOverCell = Grid.GetInstant.GetCellFromCoordinates(new Position((int)mousePos.x, (int)mousePos.y));
+
+                if (mouseOverCell != null)
+                {
+                    mouseOverCell.AddComponent<PowerPlantBehaviour>();
+                    mouseOverCell.GetComponent<SpriteRenderer>().color = Color.green;
+                }
             }
-
-            mousePos = new Vector3(Mathf.Round(mousePos.x), Mathf.Round(mousePos.y));
-            
-            Debug.Log(mousePos);
-            // TODO
-            //GameObject mouseOverCell;
-            //if (CellList.TryGetValue(new Position((int)mousePos.x, (int)mousePos.y), out mouseOverCell))
-            //{
-            //    Debug.Log("Selected: " + mouseOverCell.name + " with neighbour cells: " + mouseOverCell.GetComponent<AsteroidCell>().cellN);
-            //}
         }
-        
-
 
         CameraMovement();
         CameraZoomInOut();

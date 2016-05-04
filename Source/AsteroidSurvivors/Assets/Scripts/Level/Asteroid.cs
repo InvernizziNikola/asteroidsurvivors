@@ -1,17 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
-public class Asteroid : MonoBehaviour {
-
-    public enum AstSize
-    {
-        Small = 5,
-        Normal = 7, 
-        Big = 10,
-        Huge = 14
-    }
-
+public class Asteroid : MonoBehaviour
+{
+    
     public Texture2D AsteroidTexture;
     public Material AsteroidMaterial;
     private List<Sprite> AsteroidSpritePieces = new List<Sprite>();
@@ -24,6 +18,10 @@ public class Asteroid : MonoBehaviour {
     
     public Dictionary<Position, GameObject> AsteroidCells = new Dictionary<Position, GameObject>();
 
+    public string AsteroidName = "Aurora Base Delta Pi";
+    public string AsteroidShortName = "Aur. B-DP";
+    
+    public Rect rect;
 
     void Awake()
     {
@@ -33,6 +31,10 @@ public class Asteroid : MonoBehaviour {
     }
     void Start()
     {
+        Grid.GetInstant.AddAsteroid(this.gameObject);
+
+        GenerateCellsForAsteroid();
+        
     }
 
     private void GenerateSpritesList()
@@ -50,14 +52,13 @@ public class Asteroid : MonoBehaviour {
                         ((float)AsteroidTexture.width / columns), 
                         ((float)AsteroidTexture.height / rows)), 
                     new Vector2(0.5f,0.5f),
-                    512); 
+                    128); 
                 
                 tempSprite.name = x + " - " + y;
                 AsteroidSpritePieces.Add(tempSprite);
             }
         }
     }
-
     public void Regenerate()
     {
         GeneratePosRangeList();
@@ -66,7 +67,6 @@ public class Asteroid : MonoBehaviour {
     public void GeneratePosRangeList()
     {
         PositionAndRangeList.Clear();
-
 
         float astSize = (float)AsteroidSize;
 
@@ -82,7 +82,6 @@ public class Asteroid : MonoBehaviour {
 
         for (int i = 0; i < posRangeCount; i++)
         {
-
             float tempRange = 0;
             Vector2 tempPos = Vector2.zero;
 
@@ -108,6 +107,24 @@ public class Asteroid : MonoBehaviour {
             PosRange temp = new PosRange(tempRange, tempPos);
             PositionAndRangeList.Add(temp);
         }
+
+        rect = new Rect();
+        foreach (PosRange pR in PositionAndRangeList)
+        {
+            if (pR.position.x - pR.range < rect.xMin)
+                rect.xMin = pR.position.x - pR.range;
+
+            if (pR.position.y - pR.range < rect.yMin)
+                rect.yMin = pR.position.y - pR.range;
+
+            if (pR.position.x + pR.range > rect.xMax)
+                rect.xMax = pR.position.x + pR.range;
+
+            if (pR.position.y + pR.range > rect.yMax)
+                rect.yMax = pR.position.y + pR.range;
+        }
+       
+
     }
     public void GenerateCellsForAsteroid()
     {
@@ -154,7 +171,7 @@ public class Asteroid : MonoBehaviour {
                     if (closestPointDist < posRangeItem.range)
                     {
                         GameObject temp = Instantiate(AsteroidCellPrefab, new Vector2(x, y), Quaternion.identity) as GameObject;
-                        temp.name = gameObject.name + ": " + x + " - " + y;
+                        temp.name = "AsteroidCell (" + x + ", " + y + ")";
 
                         AsteroidCells.Add(new Position(x, y), temp);
 
@@ -228,7 +245,31 @@ public class Asteroid : MonoBehaviour {
             {
 
                 cellScript.cellN = cellNeighbours;
+                int neighbourCount = 0;
 
+                if (cellNeighbours.HasLeftAbove)
+                    neighbourCount += 1;
+                if (cellNeighbours.HasAbove)
+                    neighbourCount += 2;
+                if (cellNeighbours.HasRightAbove)
+                    neighbourCount += 4;
+                if (cellNeighbours.HasLeft)
+                    neighbourCount += 8;
+                if (cellNeighbours.HasRight)
+                    neighbourCount += 16;
+                if (cellNeighbours.HasLeftBelow)
+                    neighbourCount += 32;
+                if (cellNeighbours.HasBelow)
+                    neighbourCount += 64;
+                if (cellNeighbours.HasRightBelow)
+                    neighbourCount += 128;
+                
+                cellRenderer.sprite = GameObject.FindGameObjectWithTag("SpriteManager").GetComponent<SpriteManager>().GetAsteroidSprite(neighbourCount);
+
+                
+
+
+                /*
                 // TODO ADD ALL OPTIONS!
                 if (cellNeighbours.HasAbove == false
                     && cellNeighbours.HasLeft == false && cellNeighbours.HasRight == true
@@ -290,6 +331,7 @@ public class Asteroid : MonoBehaviour {
                     cellRenderer.sprite = AsteroidSpritePieces[4];
                 }
                 cellRenderer.material = AsteroidMaterial;
+                */
             }
             else
                 Debug.LogWarning("Cell without Cellscript");
@@ -298,7 +340,8 @@ public class Asteroid : MonoBehaviour {
         
     }
     
-	void Update () {
+	void Update ()
+    {
 	    if(Input.GetKeyDown(KeyCode.R))
         {
             Regenerate();
@@ -306,19 +349,20 @@ public class Asteroid : MonoBehaviour {
 	}
 
 
+    public GameObject GetCellFromCoordinates(Position coordinates)
+    {
+        GameObject cell;
+        if (AsteroidCells.TryGetValue(coordinates, out cell))
+            return cell;
+
+        return null;
+    }
+
 
     public void Save()
     {
 
     }
-
-
-
-
-
-
-
-
     void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
@@ -333,6 +377,11 @@ public class Asteroid : MonoBehaviour {
         foreach (PosRange posRangeItem in PositionAndRangeList)
         {
             Gizmos.DrawWireSphere(new Vector2(posRangeItem.position.x + transform.position.x, posRangeItem.position.y + transform.position.y), posRangeItem.range);
-        }        
+        }
+
+
+        Gizmos.color = Color.black;
+        Gizmos.DrawWireCube(new Vector2(rect.center.x + transform.position.x, rect.center.y + transform.position.y), rect.size);
+            
     }
 }
