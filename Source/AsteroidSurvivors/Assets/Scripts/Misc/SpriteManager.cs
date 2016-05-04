@@ -18,7 +18,8 @@ public class SpriteManager : MonoBehaviour {
     public List<Sprite> CharactersSprites = new List<Sprite>();
 
     // Use this for initialization
-    void Start () {
+    void Start ()
+    {
 
         GenerateSprites(AsteroidsSprites, AsteroidsTexture, AsteroidsTileSize);
         GenerateSprites(BuildingsSprites, BuildingsTexture, BuildingsTileSize);

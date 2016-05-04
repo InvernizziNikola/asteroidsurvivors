@@ -265,10 +265,7 @@ public class Asteroid : MonoBehaviour
                     neighbourCount += 128;
                 
                 cellRenderer.sprite = GameObject.FindGameObjectWithTag("SpriteManager").GetComponent<SpriteManager>().GetAsteroidSprite(neighbourCount);
-
                 
-
-
                 /*
                 // TODO ADD ALL OPTIONS!
                 if (cellNeighbours.HasAbove == false
