@@ -246,24 +246,49 @@ public class Asteroid : MonoBehaviour
 
                 cellScript.cellN = cellNeighbours;
                 int neighbourCount = 0;
-
+                int counter = 0;
                 if (cellNeighbours.HasLeftAbove)
+                {
+                    counter++;
                     neighbourCount += 1;
+                }
                 if (cellNeighbours.HasAbove)
+                {
+                    counter++;
                     neighbourCount += 2;
+                }
                 if (cellNeighbours.HasRightAbove)
+                {
+                    counter++;
                     neighbourCount += 4;
+                }
                 if (cellNeighbours.HasLeft)
+                {
+                    counter++;
                     neighbourCount += 8;
+                }
                 if (cellNeighbours.HasRight)
+                {
+                    counter++;
                     neighbourCount += 16;
+                }
                 if (cellNeighbours.HasLeftBelow)
+                {
+                    counter++;
                     neighbourCount += 32;
+                }
                 if (cellNeighbours.HasBelow)
+                {
+                    counter++;
                     neighbourCount += 64;
+                }
                 if (cellNeighbours.HasRightBelow)
+                {
+                    counter++;
                     neighbourCount += 128;
-                
+                }
+                if(counter < 3)
+                    Debug.Log(counter);
                 cellRenderer.sprite = GameObject.FindGameObjectWithTag("SpriteManager").GetComponent<SpriteManager>().GetAsteroidSprite(neighbourCount);
                 
                 /*
@@ -339,7 +364,7 @@ public class Asteroid : MonoBehaviour
     
 	void Update ()
     {
-	    if(Input.GetKeyDown(KeyCode.R))
+	    if(Input.GetKey(KeyCode.R))
         {
             Regenerate();
         }
