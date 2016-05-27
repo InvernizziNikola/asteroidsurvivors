@@ -16,7 +16,6 @@ public class Building
     public int generates = 10000;
     public int usage = 0;
 
-
     public override string ToString()
     {
         return name;
@@ -154,57 +153,13 @@ public class NewBehaviourScript : MonoBehaviour
 {
 
     public GameData GameDataLoaded;
+    public GameData GameDataTest;
 
     void Start()
     {
-        /*
-        IFormatter bf2 = new BinaryFormatter();
-
-        // 1. Construct a SurrogateSelector object
-        SurrogateSelector ss2 = new SurrogateSelector();
-
-        Vector3SerializationSurrogate v3ss2 = new Vector3SerializationSurrogate();
-        ss2.AddSurrogate(typeof(Vector3), new StreamingContext(StreamingContextStates.All), v3ss2);
-
-        // 2. Have the formatter use our surrogate selector
-        bf2.SurrogateSelector = ss2;
-
-        Stream stream2 = new FileStream("MyFile.bin", FileMode.Create, FileAccess.Write, FileShare.None);
-        bf.Serialize(stream, test2);
-        stream.Close();
 
 
-        // IFormatter formatter = new BinaryFormatter();
-        // Stream stream = new FileStream("MyFile.bin", FileMode.Create, FileAccess.Write, FileShare.None);
-        // formatter.Serialize(stream, test);
-        // stream.Close();
-
-        IFormatter bf = new BinaryFormatter();
-
-        // 1. Construct a SurrogateSelector object
-        SurrogateSelector ss = new SurrogateSelector();
-
-        // create surrogate
-        Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
-
-        // add surrogate
-        ss.AddSurrogate(typeof(Vector3), new StreamingContext(StreamingContextStates.All), v3ss);
-
-        // 2. Have the formatter use our surrogate selector
-        bf.SurrogateSelector = ss;
-
-        // normal deserialization
-        Stream stream = new FileStream("MyFile.bin", FileMode.Open, FileAccess.Read, FileShare.Read);
-        test = (List<Vector3>)bf.Deserialize(stream);
-        stream.Close();
-
-        // IFormatter formatter = new BinaryFormatter();
-        // Stream stream = new FileStream("MyFile.bin", FileMode.Open, FileAccess.Read, FileShare.Read);
-        // test = (List<Position>)formatter.Deserialize(stream);
-        // stream.Close();
-        */
-
-        GameData GameDataTest = new GameData();
+        /*GameDataTest = new GameData();
 
         GameDataTest.fileName = "SAVE";
         GameDataTest.LastSaveDate = "NOW";
@@ -231,6 +186,7 @@ public class NewBehaviourScript : MonoBehaviour
 
 
         GameDataTest.AsteroidsData.Add(AstDataTest);
+        */
 
         // SAVE
         byte[] key = Convert.FromBase64String(Encryption.CryptoKey);
@@ -245,46 +201,22 @@ public class NewBehaviourScript : MonoBehaviour
 
 
         // LOAD
-        string fileToLoad = "SAVE";
+        string fileToLoad = "TEST";
 
         using (FileStream file = new FileStream(fileToLoad + ".dat", FileMode.Open))
-        using (CryptoStream cryptoStream = Encryption.CreateDecryptionStream(key, file))
         {
-            GameDataLoaded = (GameData)Encryption.ReadObjectFromStream(cryptoStream);
-        }
-        if (GameDataLoaded.fileName == fileToLoad)
-            Debug.Log(GameDataLoaded.ToString());
-        else
-        {
-            Debug.Log("ERROR LOADING: SaveFileName: " + fileToLoad + " - SaveFileInternalName: " + GameDataLoaded.fileName);
-            GameDataLoaded = new GameData();
-        }
+            using (CryptoStream cryptoStream = Encryption.CreateDecryptionStream(key, file))
+            {
+                GameDataLoaded = (GameData)Encryption.ReadObjectFromStream(cryptoStream);
 
-        /*foreach (Building b in newMyVarClass.buildings)
-        {
-            Debug.Log(b.name);
-        }*/
-
-
-        /*
-        //SAVE
-        BinaryFormatter bf = new BinaryFormatter();
-        Stream stream = new FileStream("MyFile.bin", FileMode.Create, FileAccess.Write, FileShare.None);
-        bf.Serialize(stream, test);
-        stream.Close();
-
-        // LOAD
-        IFormatter formatter = new BinaryFormatter();
-        Stream stream2 = new FileStream("MyFile.bin", FileMode.Open, FileAccess.Read, FileShare.Read);
-        Buildings test2 = (Buildings)formatter.Deserialize(stream2);
-        stream2.Close();
-
-        //PRINT
-        foreach (Building b in test2.buildings)
-        {
-            Debug.Log(b.name);
-        }
-        */
-        
+                if (GameDataLoaded.fileName == fileToLoad)
+                    Debug.Log(GameDataLoaded.ToString());
+                else
+                {
+                    Debug.Log("ERROR LOADING: SaveFileName: " + fileToLoad + " - SaveFileInternalName: " + GameDataLoaded.fileName);
+                    GameDataLoaded = new GameData();
+                }
+            }
+        }        
     }
 }
