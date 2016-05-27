@@ -1,0 +1,46 @@
+        
+        IFormatter bf2 = new BinaryFormatter();
+
+        // 1. Construct a SurrogateSelector object
+        SurrogateSelector ss2 = new SurrogateSelector();
+
+        Vector3SerializationSurrogate v3ss2 = new Vector3SerializationSurrogate();
+        ss2.AddSurrogate(typeof(Vector3), new StreamingContext(StreamingContextStates.All), v3ss2);
+
+        // 2. Have the formatter use our surrogate selector
+        bf2.SurrogateSelector = ss2;
+
+        Stream stream2 = new FileStream("MyFile.bin", FileMode.Create, FileAccess.Write, FileShare.None);
+        bf.Serialize(stream, test2);
+        stream.Close();
+
+
+        // IFormatter formatter = new BinaryFormatter();
+        // Stream stream = new FileStream("MyFile.bin", FileMode.Create, FileAccess.Write, FileShare.None);
+        // formatter.Serialize(stream, test);
+        // stream.Close();
+
+        IFormatter bf = new BinaryFormatter();
+
+        // 1. Construct a SurrogateSelector object
+        SurrogateSelector ss = new SurrogateSelector();
+
+        // create surrogate
+        Vector3SerializationSurrogate v3ss = new Vector3SerializationSurrogate();
+
+        // add surrogate
+        ss.AddSurrogate(typeof(Vector3), new StreamingContext(StreamingContextStates.All), v3ss);
+
+        // 2. Have the formatter use our surrogate selector
+        bf.SurrogateSelector = ss;
+
+        // normal deserialization
+        Stream stream = new FileStream("MyFile.bin", FileMode.Open, FileAccess.Read, FileShare.Read);
+        test = (List<Vector3>)bf.Deserialize(stream);
+        stream.Close();
+
+        // IFormatter formatter = new BinaryFormatter();
+        // Stream stream = new FileStream("MyFile.bin", FileMode.Open, FileAccess.Read, FileShare.Read);
+        // test = (List<Position>)formatter.Deserialize(stream);
+        // stream.Close();
+        

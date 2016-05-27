@@ -82,10 +82,3 @@ public struct CellNeighbours
     public KeyValuePairSerializable<Position, GameObject> RightBelow;
     public bool HasRightBelow;
 }
-
-
-[System.Serializable]
-public struct SerializableAsteroid
-{
-
-}
