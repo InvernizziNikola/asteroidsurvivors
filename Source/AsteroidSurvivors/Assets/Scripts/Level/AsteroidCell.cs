@@ -16,4 +16,15 @@ public class AsteroidCell : MonoBehaviour{
             sr.transform.localScale = Vector2.one;
         }
     }
+
+    public CellData Save()
+    {
+        CellData cellData = new CellData();
+
+        cellData.CellNeighbours = new CellNeighboursData(cellN.HasLeftAbove, cellN.HasAbove, cellN.HasRightAbove, 
+                                                        cellN.HasLeft, cellN.HasRight, 
+                                                        cellN.HasLeftBelow, cellN.HasBelow, cellN.HasRightBelow);
+
+        return cellData;
+    }
 }

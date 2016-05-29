@@ -23,10 +23,12 @@ public class PlayerInputs : MonoBehaviour
     {
         bool overUI = EventSystem.current.IsPointerOverGameObject();
 
-        if (Input.GetMouseButtonDown(0))
+        if (!overUI)
         {
-            if (!overUI)
+
+            if (Input.GetMouseButtonDown(0))
             {
+
                 Vector2 mousePos = new Vector2();
 
                 float dist;
@@ -49,11 +51,12 @@ public class PlayerInputs : MonoBehaviour
                     mouseOverCell.GetComponent<SpriteRenderer>().color = Color.green;
                 }
             }
-        }
 
-        CameraMovement();
-        CameraZoomInOut();
+            CameraMovement();
+            CameraZoomInOut();
+        }
     }
+
     void CameraMovement()
     {
         Camera.main.transform.position += new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * Time.deltaTime * 10.0f;
@@ -63,6 +66,6 @@ public class PlayerInputs : MonoBehaviour
         float newfov = Input.GetAxis("Mouse ScrollWheel") * -5;
         targetZoom += newfov;
         targetZoom = Mathf.Clamp(targetZoom, 1, 20);
-        Camera.main.orthographicSize = Mathf.Lerp(targetZoom, Camera.main.orthographicSize, 0.95f);
+        Camera.main.orthographicSize = Mathf.Lerp(targetZoom, Camera.main.orthographicSize, 0.97f);
     }
 }

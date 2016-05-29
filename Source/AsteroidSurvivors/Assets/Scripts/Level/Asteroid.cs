@@ -243,7 +243,6 @@ public class Asteroid : MonoBehaviour
             SpriteRenderer cellRenderer = cell.Value.GetComponent<SpriteRenderer>();
             if (cellScript != null)
             {
-
                 cellScript.cellN = cellNeighbours;
                 int neighbourCount = 0;
                 int counter = 0;
@@ -291,69 +290,6 @@ public class Asteroid : MonoBehaviour
                     Debug.Log(counter);
                 cellRenderer.sprite = GameObject.FindGameObjectWithTag("SpriteManager").GetComponent<SpriteManager>().GetAsteroidSprite(neighbourCount);
                 
-                /*
-                // TODO ADD ALL OPTIONS!
-                if (cellNeighbours.HasAbove == false
-                    && cellNeighbours.HasLeft == false && cellNeighbours.HasRight == true
-                    && cellNeighbours.HasBelow == true)
-                {
-                    cellRenderer.sprite = AsteroidSpritePieces[0];
-                }
-                else if (cellNeighbours.HasAbove == false
-                    && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == true
-                    && cellNeighbours.HasBelow == true)
-                {
-                    cellRenderer.sprite = AsteroidSpritePieces[1];
-                }
-                else if (cellNeighbours.HasAbove == false
-                    && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == false
-                    && cellNeighbours.HasBelow == true)
-                {
-                    cellRenderer.sprite = AsteroidSpritePieces[2];
-                }
-                else if (cellNeighbours.HasAbove == true
-                   && cellNeighbours.HasLeft == false && cellNeighbours.HasRight == true
-                       && cellNeighbours.HasBelow == true)
-                {
-                    cellRenderer.sprite = AsteroidSpritePieces[3];
-                }
-                else if (cellNeighbours.HasAbove == true
-                   && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == true
-                       && cellNeighbours.HasBelow == true)
-                {
-                    cellRenderer.sprite = AsteroidSpritePieces[4];
-                }
-                else if (cellNeighbours.HasAbove == true
-                   && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == false
-                       && cellNeighbours.HasBelow == true)
-                {
-                    cellRenderer.sprite = AsteroidSpritePieces[5];
-                }
-                else if (cellNeighbours.HasAbove == true
-                   && cellNeighbours.HasLeft == false && cellNeighbours.HasRight == true
-                       && cellNeighbours.HasBelow == false)
-                {
-                    cellRenderer.sprite = AsteroidSpritePieces[6];
-                }
-                else if (cellNeighbours.HasAbove == true
-                   && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == true
-                       && cellNeighbours.HasBelow == false)
-                {
-                    cellRenderer.sprite = AsteroidSpritePieces[7];
-                }
-                else if (cellNeighbours.HasAbove == true
-                   && cellNeighbours.HasLeft == true && cellNeighbours.HasRight == false
-                       && cellNeighbours.HasBelow == false)
-                {
-                    cellRenderer.sprite = AsteroidSpritePieces[8];
-                }
-                else
-                {
-                    // put middle piece if none is selected
-                    cellRenderer.sprite = AsteroidSpritePieces[4];
-                }
-                cellRenderer.material = AsteroidMaterial;
-                */
             }
             else
                 Debug.LogWarning("Cell without Cellscript");
@@ -381,10 +317,25 @@ public class Asteroid : MonoBehaviour
     }
 
 
-    public void Save()
+    public AsteroidData Save()
     {
+        AsteroidData astData = new AsteroidData();
 
+        // save the cells
+        foreach(KeyValuePair<Position,GameObject> astCellGO in AsteroidCells)
+        {
+            CellData tempCellData = astCellGO.Value.GetComponent<AsteroidCell>().Save();
+
+            tempCellData.X = astCellGO.Key.x;
+            tempCellData.Y = astCellGO.Key.y;
+
+            astData.Cells.Add(tempCellData);
+        }
+
+        return astData;
     }
+
+
     void OnDrawGizmos()
     {
         Gizmos.color = Color.green;

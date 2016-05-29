@@ -16,7 +16,6 @@ public class Grid {
                 gridInstant = new Grid();
             return gridInstant;
         }
-
     }
     
     private GameObject selectedAsteroid;
@@ -41,6 +40,9 @@ public class Grid {
 
     public GameObject GetCellFromCoordinates(Position coordinates)
     {
+        if (selectedAsteroid == null)
+            return null;
+
         Asteroid astScript = selectedAsteroid.GetComponent<Asteroid>();
         if (astScript == null)
             return null;
@@ -56,9 +58,16 @@ public class Grid {
     {
 
     }
-    public void Save()
+    public GridData Save()
     {
-       
+        GridData gridData = new GridData();
+
+        foreach(GameObject astGO in AsteroidList)
+        {
+            gridData.AsteroidsData.Add(astGO.GetComponent<Asteroid>().Save());
+        }
+
+        return gridData;
     }
 }
 
