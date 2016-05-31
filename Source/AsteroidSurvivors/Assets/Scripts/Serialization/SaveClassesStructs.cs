@@ -21,7 +21,6 @@ public class GridData
 }
 
 // ASTEROIDS, ASTEROIDCELLS & BUILDINGS
-
 [Serializable]
 public class AsteroidData
 {
@@ -34,6 +33,14 @@ public class AsteroidData
     public PlayerControlledObjectsData PlayerControlledObjects = new PlayerControlledObjectsData();
 }
 
+// CELLDATA
+[Serializable]
+public class CellData
+{
+    public CellNeighboursData CellNeighbours;
+    public int X;
+    public int Y;
+}
 [Serializable]
 public struct CellNeighboursData
 {
@@ -61,13 +68,7 @@ public struct CellNeighboursData
     public bool RightBottom;
 }
 
-[Serializable]
-public class CellData
-{
-    public CellNeighboursData CellNeighbours;
-    public int X;
-    public int Y;
-}
+// BUILDING DATA
 [Serializable]
 public class BuildingData
 {
@@ -138,7 +139,7 @@ public class PlayerData
 [Serializable]
 public class FileData
 {
-    public int GameVersion = 1;
+    public int GameVersion = -1;
     public string FileName;
     public string SaveDate;
 }

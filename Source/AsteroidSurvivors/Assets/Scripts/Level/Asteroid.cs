@@ -195,47 +195,47 @@ public class Asteroid : MonoBehaviour
             // top layer cell neighbours
             if (AsteroidCells.TryGetValue(cell.Key + new Position(-1, 1), out neighbour))
             {
-                cellNeighbours.LeftAbove = new KeyValuePairSerializable<Position, GameObject>(cell.Key + new Position(-1, 1), neighbour);
+                cellNeighbours.LeftAbove = new KeyValuePair<Position, GameObject>(cell.Key + new Position(-1, 1), neighbour);
                 cellNeighbours.HasLeftAbove = true;
             }
             if (AsteroidCells.TryGetValue(cell.Key + new Position(0, 1), out neighbour))
             {
-                cellNeighbours.Above = new KeyValuePairSerializable<Position, GameObject>(cell.Key + new Position(0, 1), neighbour);
+                cellNeighbours.Above = new KeyValuePair<Position, GameObject>(cell.Key + new Position(0, 1), neighbour);
                 cellNeighbours.HasAbove = true;
             }
 
             if (AsteroidCells.TryGetValue(cell.Key + new Position(1, 1), out neighbour))
             {
-                cellNeighbours.RightAbove = new KeyValuePairSerializable<Position, GameObject>(cell.Key + new Position(1, 1), neighbour);
+                cellNeighbours.RightAbove = new KeyValuePair<Position, GameObject>(cell.Key + new Position(1, 1), neighbour);
                 cellNeighbours.HasRightAbove = true;
             }
 
             // middle layer cell neighbours
             if (AsteroidCells.TryGetValue(cell.Key + new Position(-1, 0), out neighbour))
             {
-                cellNeighbours.Left = new KeyValuePairSerializable<Position, GameObject>(cell.Key + new Position(-1, 0), neighbour);
+                cellNeighbours.Left = new KeyValuePair<Position, GameObject>(cell.Key + new Position(-1, 0), neighbour);
                 cellNeighbours.HasLeft = true;
             }
             if (AsteroidCells.TryGetValue(cell.Key + new Position(1, 0), out neighbour))
             {
-                cellNeighbours.Right = new KeyValuePairSerializable<Position, GameObject>(cell.Key + new Position(1, 0), neighbour);
+                cellNeighbours.Right = new KeyValuePair<Position, GameObject>(cell.Key + new Position(1, 0), neighbour);
                 cellNeighbours.HasRight = true;
             }
             
             // bottom layer cell neighbours
             if (AsteroidCells.TryGetValue(cell.Key + new Position(-1, -1), out neighbour))
             {
-                cellNeighbours.LeftBelow = new KeyValuePairSerializable<Position, GameObject>(cell.Key + new Position(-1, -1), neighbour);
+                cellNeighbours.LeftBelow = new KeyValuePair<Position, GameObject>(cell.Key + new Position(-1, -1), neighbour);
                 cellNeighbours.HasLeftBelow = true;
             }
             if (AsteroidCells.TryGetValue(cell.Key + new Position(0, -1), out neighbour))
             {
-                cellNeighbours.Below = new KeyValuePairSerializable<Position, GameObject>(cell.Key + new Position(0, -1), neighbour);
+                cellNeighbours.Below = new KeyValuePair<Position, GameObject>(cell.Key + new Position(0, -1), neighbour);
                 cellNeighbours.HasBelow = true;
             }
             if (AsteroidCells.TryGetValue(cell.Key + new Position(1, -1), out neighbour))
             {
-                cellNeighbours.RightBelow = new KeyValuePairSerializable<Position, GameObject>(cell.Key + new Position(1, -1), neighbour);
+                cellNeighbours.RightBelow = new KeyValuePair<Position, GameObject>(cell.Key + new Position(1, -1), neighbour);
                 cellNeighbours.HasRightBelow = true;
             }
 

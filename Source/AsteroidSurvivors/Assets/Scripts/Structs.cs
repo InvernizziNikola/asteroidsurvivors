@@ -44,41 +44,29 @@ public struct Position
         return new Position(p1.x + p2.x, p1.y + p2.y);
     }
 }
-[System.Serializable]
-public struct KeyValuePairSerializable<K, V>
-{
-    public KeyValuePairSerializable(K k, V v)
-    {
-        Key = k;
-        Value = v;
-    }
-
-    public K Key { get; set; }
-    public V Value { get; set; }
-}
 
 [System.Serializable]
 public struct CellNeighbours
 {
     // TOP LAYER
-    public KeyValuePairSerializable<Position, GameObject> LeftAbove;
+    public KeyValuePair<Position, GameObject> LeftAbove;
     public bool HasLeftAbove;
-    public KeyValuePairSerializable<Position, GameObject> Above;
+    public KeyValuePair<Position, GameObject> Above;
     public bool HasAbove;
-    public KeyValuePairSerializable<Position, GameObject> RightAbove;
+    public KeyValuePair<Position, GameObject> RightAbove;
     public bool HasRightAbove;
     
     // MIDDLE LAYER
-    public KeyValuePairSerializable<Position, GameObject> Left;
+    public KeyValuePair<Position, GameObject> Left;
     public bool HasLeft;
-    public KeyValuePairSerializable<Position, GameObject> Right;
+    public KeyValuePair<Position, GameObject> Right;
     public bool HasRight;
 
     // BOTTOM LAYER
-    public KeyValuePairSerializable<Position, GameObject> LeftBelow;
+    public KeyValuePair<Position, GameObject> LeftBelow;
     public bool HasLeftBelow;
-    public KeyValuePairSerializable<Position, GameObject> Below;
+    public KeyValuePair<Position, GameObject> Below;
     public bool HasBelow;
-    public KeyValuePairSerializable<Position, GameObject> RightBelow;
+    public KeyValuePair<Position, GameObject> RightBelow;
     public bool HasRightBelow;
 }

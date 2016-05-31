@@ -85,53 +85,56 @@ public class GameBehaviour : MonoBehaviour {
     }
     void Load()
     {
-
-        SaveData loadedData = new SaveData();
-
-        System.Diagnostics.Stopwatch watch01 = new System.Diagnostics.Stopwatch();
-        watch01.Start();
-
         try
         {
-            // LOAD
-            byte[] key = Convert.FromBase64String(Encryption.CryptoKey);
-            using (FileStream file = new FileStream(FileName, FileMode.Open))
+            if (File.Exists(FileName))
             {
-                using (CryptoStream cryptoStream = Encryption.CreateDecryptionStream(key, file))
+                SaveData loadedData = new SaveData();
+
+                // LOAD
+                byte[] key = Convert.FromBase64String(Encryption.CryptoKey);
+                using (FileStream file = new FileStream(FileName, FileMode.Open, FileAccess.Read))
                 {
-                    loadedData = (SaveData)Encryption.ReadObjectFromStream(cryptoStream);
+                    using (CryptoStream cryptoStream = Encryption.CreateDecryptionStream(key, file))
+                    {
+                        loadedData = (SaveData)Encryption.ReadObjectFromStream(cryptoStream);
+                    }
+                }
+
+
+                // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                //    ONLY DESERIALIZE THIS STREAM IF SAVE IS SAME VERSION
+                // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                if (GameVersion == loadedData.FileData.GameVersion)
+                {
+                    try
+                    {
+                        MemoryStream gameDataStream = loadedData.GameDataStream;
+
+                        IFormatter formatter = new BinaryFormatter();
+                        gameDataStream.Seek(0, SeekOrigin.Begin);
+                        GameData loadedGameData = (GameData)formatter.Deserialize(gameDataStream);
+
+                        LoadedGameData = loadedGameData;
+
+                        // Do something with the data here
+
+                    }
+                    catch
+                    {
+                        Debug.Log("Saved gamedata in file isn't valid!");
+                    }
                 }
             }
-
-            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            // ONLY DESERIALIZE THIS STREAM IF SAVE IS SAME VERSION OR ETC
-            // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            if (GameVersion == loadedData.FileData.GameVersion)
+            else
             {
-
-                try
-                {
-                    MemoryStream gameDataStream = loadedData.GameDataStream;
-
-                    IFormatter formatter = new BinaryFormatter();
-                    gameDataStream.Seek(0, SeekOrigin.Begin);
-                    GameData loadedGameData = (GameData)formatter.Deserialize(gameDataStream);
-
-                    LoadedGameData = loadedGameData;
-                }
-                catch
-                {
-                    Debug.Log("SAVEFILE VALID, BUT GAMEDATA CORRUPTED!");
-                }
+                Debug.Log("File doesn't exist!");
             }
         }
         catch
         {
-            Debug.Log("SAVEFILE CORRUPTED!");
+            Debug.Log("Couldn't open file! File is probably corrupted!");
         }
-
-        watch01.Stop();
-        Debug.Log("Loaded in " + watch01.ElapsedMilliseconds + " milliseconds.");
     } 
     void NewGame()
     {
