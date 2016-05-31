@@ -40,9 +40,12 @@ public class Player {
 
     public PlayerData Save()
     {
-        return null;
+        return new PlayerData()
+        {
+            TimePlayed = 552454
+        };
     }
-    public void Load()
+    public void Load(PlayerData playerData)
     {
 
     }

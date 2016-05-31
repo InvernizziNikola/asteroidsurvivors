@@ -48,7 +48,7 @@ public class PlayerInputs : MonoBehaviour
                 if (mouseOverCell != null)
                 {
                     mouseOverCell.AddComponent<PowerPlantBehaviour>();
-                    mouseOverCell.GetComponent<SpriteRenderer>().color = Color.green;
+                    mouseOverCell.GetComponent<MeshRenderer>().material.color = Color.green;
                 }
             }
 

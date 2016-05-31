@@ -46,27 +46,7 @@ public struct Position
 }
 
 [System.Serializable]
-public struct CellNeighbours
+public class CellNeighbours
 {
-    // TOP LAYER
-    public KeyValuePair<Position, GameObject> LeftAbove;
-    public bool HasLeftAbove;
-    public KeyValuePair<Position, GameObject> Above;
-    public bool HasAbove;
-    public KeyValuePair<Position, GameObject> RightAbove;
-    public bool HasRightAbove;
-    
-    // MIDDLE LAYER
-    public KeyValuePair<Position, GameObject> Left;
-    public bool HasLeft;
-    public KeyValuePair<Position, GameObject> Right;
-    public bool HasRight;
-
-    // BOTTOM LAYER
-    public KeyValuePair<Position, GameObject> LeftBelow;
-    public bool HasLeftBelow;
-    public KeyValuePair<Position, GameObject> Below;
-    public bool HasBelow;
-    public KeyValuePair<Position, GameObject> RightBelow;
-    public bool HasRightBelow;
+    public List<GameObject> Neighbours = new List<GameObject>();
 }

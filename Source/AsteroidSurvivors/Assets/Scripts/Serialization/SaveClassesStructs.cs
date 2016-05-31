@@ -17,7 +17,7 @@ using System.Diagnostics;
 [Serializable]
 public class GridData
 {
-    public List<AsteroidData> AsteroidsData = new List<AsteroidData>();
+    public List<AsteroidData> Asteroids = new List<AsteroidData>();
 }
 
 // ASTEROIDS, ASTEROIDCELLS & BUILDINGS
@@ -37,35 +37,14 @@ public class AsteroidData
 [Serializable]
 public class CellData
 {
-    public CellNeighboursData CellNeighbours;
+    public CellNeighboursData CellNeighbours = new CellNeighboursData();
     public int X;
     public int Y;
 }
 [Serializable]
-public struct CellNeighboursData
+public class CellNeighboursData
 {
-    public CellNeighboursData(bool leftAbove, bool middleAbove, bool rightAbove, bool leftMiddle, bool rightMiddle, bool leftBottom, bool middleBottom, bool rightBottom)
-    {
-        LeftAbove = leftAbove;
-        MiddleAbove = middleAbove;
-        RightAbove = rightAbove;
-
-        LeftMiddle = leftMiddle;
-        RightMiddle = rightMiddle;
-
-        LeftBottom = leftBottom;
-        MiddleBottom = middleBottom;
-        RightBottom = rightBottom;
-    }
-
-    public bool LeftAbove;
-    public bool MiddleAbove;
-    public bool RightAbove;
-    public bool LeftMiddle;
-    public bool RightMiddle;
-    public bool LeftBottom;
-    public bool MiddleBottom;
-    public bool RightBottom;
+    public List<bool> Neighbours = new List<bool>();
 }
 
 // BUILDING DATA
@@ -129,10 +108,13 @@ public class DroneData
 [Serializable]
 public class PlayerData
 {
+    public int TimePlayed;
+
     public int CameraZoom;
     public int CameraLocationX;
     public int CameraLocationY;
     
+
 }
 
 // CONTAINER FOR DATA ABOUT FILE IT SELF
@@ -148,8 +130,6 @@ public class FileData
 [Serializable]
 public class GameData
 {
-    public int TimePlayed;
-
     public GridData GridData = new GridData();
     public PlayerData PlayerData = new PlayerData();
 }

@@ -13,10 +13,7 @@ public class GameBehaviour : MonoBehaviour {
     private bool StartedNew = false;
 
     public string FileName = "SaveFile.dat";
-
-    public GameData LoadedGameData;
-    public GameData SavedGameData;
-
+    
     // Use this for initialization
     void Start ()
     {
@@ -54,16 +51,12 @@ public class GameBehaviour : MonoBehaviour {
 
         // Create the container for all gamedata
         GameData gameData = new GameData();
-
-        gameData.TimePlayed = 32452345;
-
+        
         // Call save on grid to get all the grid data
         gameData.GridData = Grid.GetInstant.Save();
         // Call save on player to get all the player data
         gameData.PlayerData = Player.GetInstant.Save();
-
-        SavedGameData = gameData;
-
+        
         // Make a binary stream of the gamedata
         MemoryStream stream = new MemoryStream();
         IFormatter formatter = new BinaryFormatter();
@@ -113,17 +106,21 @@ public class GameBehaviour : MonoBehaviour {
 
                         IFormatter formatter = new BinaryFormatter();
                         gameDataStream.Seek(0, SeekOrigin.Begin);
-                        GameData loadedGameData = (GameData)formatter.Deserialize(gameDataStream);
+                        GameData gameData = (GameData)formatter.Deserialize(gameDataStream);
 
-                        LoadedGameData = loadedGameData;
-
-                        // Do something with the data here
-
+                        if (gameData != null)
+                            LoadGameData(gameData);
+                        else
+                            Debug.Log("Gamedata was empty!");
                     }
                     catch
                     {
                         Debug.Log("Saved gamedata in file isn't valid!");
                     }
+                }
+                else
+                {
+                    Debug.Log("Savefile version(" + loadedData.FileData.GameVersion + ") is not the same a the version of the game(" + GameVersion +")");
                 }
             }
             else
@@ -136,15 +133,24 @@ public class GameBehaviour : MonoBehaviour {
             Debug.Log("Couldn't open file! File is probably corrupted!");
         }
     } 
+
+    public void LoadGameData(GameData gameData)
+    {
+        // load grid data into the grid
+        Grid.GetInstant.Load(gameData.GridData);
+
+        // load player data into the player
+        Player.GetInstant.Load(gameData.PlayerData);
+    }
+
+
     void NewGame()
     {
+        // Create first asteroid
         if (prefabAsteroid != null)
         {
-            GameObject tempAsteroid = MonoBehaviour.Instantiate(prefabAsteroid) as GameObject;
-            tempAsteroid.transform.position = new Vector3(10, 0);
-
             // just make the first asteroid the selectedasteroid!
-            Grid.GetInstant.SelectedAsteroid = tempAsteroid;
+            Grid.GetInstant.SelectedAsteroid = Grid.GetInstant.CreateAsteroid(prefabAsteroid, AstSize.Small);
         }
     }
 }

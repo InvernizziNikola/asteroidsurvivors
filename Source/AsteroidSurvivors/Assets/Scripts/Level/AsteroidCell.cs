@@ -1,19 +1,41 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-[RequireComponent(typeof(SpriteRenderer))]
 public class AsteroidCell : MonoBehaviour{
 
-    public CellNeighbours cellN;
+    public GameObject ParentAsteroid;
+    public Position CellPosition;
+    public CellNeighbours CellNeighbours = new CellNeighbours();
     public int ID = -1;
 
 
     public void Start()
     {
-        SpriteRenderer sr = gameObject.GetComponent<SpriteRenderer>();
-        if (sr != null)
+        FindNeighbours();
+
+        GetComponent<MeshFilter>().mesh = MeshGenerator.GenerateAsteroidCellMesh(CellNeighbours);
+    }
+
+
+    public void FindNeighbours()
+    {
+        Dictionary<Position, GameObject> asteroidCells = ParentAsteroid.GetComponent<Asteroid>().AsteroidCells;
+
+        GameObject neighbour;
+
+        for (int y = 1; y >= -1; y--)
         {
-            sr.transform.localScale = Vector2.one;
+            for (int x = -1; x <= 1; x++)
+            {
+                if (!(x == 0 && y == 0))
+                {
+                    if (asteroidCells.TryGetValue(CellPosition + new Position(x, y), out neighbour))
+                        CellNeighbours.Neighbours.Add(neighbour);
+                    else
+                        CellNeighbours.Neighbours.Add(null);
+                }
+            }
         }
     }
 
@@ -21,10 +43,16 @@ public class AsteroidCell : MonoBehaviour{
     {
         CellData cellData = new CellData();
 
-        cellData.CellNeighbours = new CellNeighboursData(cellN.HasLeftAbove, cellN.HasAbove, cellN.HasRightAbove, 
-                                                        cellN.HasLeft, cellN.HasRight, 
-                                                        cellN.HasLeftBelow, cellN.HasBelow, cellN.HasRightBelow);
+        foreach (GameObject neighbour in CellNeighbours.Neighbours)
+        {
+            cellData.CellNeighbours.Neighbours.Add(neighbour == null ? false : true);
+        }
 
         return cellData;
+    }
+
+    public CellData Load()
+    {
+        return null;
     }
 }

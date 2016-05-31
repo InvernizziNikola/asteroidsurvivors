@@ -5,11 +5,6 @@ using UnityEngine.UI;
 
 public class Asteroid : MonoBehaviour
 {
-    
-    public Texture2D AsteroidTexture;
-    public Material AsteroidMaterial;
-    private List<Sprite> AsteroidSpritePieces = new List<Sprite>();
-
     public AstSize AsteroidSize = AstSize.Small;
 
     public GameObject AsteroidCellPrefab;
@@ -25,53 +20,29 @@ public class Asteroid : MonoBehaviour
 
     void Awake()
     {
-        GeneratePosRangeList();
-
-        GenerateSpritesList();
     }
     void Start()
     {
-        Grid.GetInstant.AddAsteroid(this.gameObject);
-
-        GenerateCellsForAsteroid();
-        
+        GenerateAsteroid();
     }
 
-    private void GenerateSpritesList()
+    public void GenerateAsteroid()
     {
-        float rows = 3;
-        float columns = 3;
-        for (float y = 0; y < columns; y++)
-        {
-            for (float x = 0; x < rows; x++)
-            {
-                Sprite tempSprite = Sprite.Create(AsteroidTexture, 
-                    new Rect(
-                        x * ((float)AsteroidTexture.width / columns), 
-                        y * ((float)AsteroidTexture.height / rows),
-                        ((float)AsteroidTexture.width / columns), 
-                        ((float)AsteroidTexture.height / rows)), 
-                    new Vector2(0.5f,0.5f),
-                    128); 
-                
-                tempSprite.name = x + " - " + y;
-                AsteroidSpritePieces.Add(tempSprite);
-            }
-        }
-    }
-    public void Regenerate()
-    {
+        PositionAndRangeList.Clear();
         GeneratePosRangeList();
+        
+        foreach (KeyValuePair<Position, GameObject> cell in AsteroidCells)
+        {
+            Destroy(cell.Value);
+        }
+        AsteroidCells.Clear();
         GenerateCellsForAsteroid();
     }
     public void GeneratePosRangeList()
     {
-        PositionAndRangeList.Clear();
-
         float astSize = (float)AsteroidSize;
 
-        Vector2 tempStartPos = Vector2.zero; //new Vector2(Random.Range(-2.0f, 2.0f), Random.Range(-2.0f, 2.0f));
-
+        Vector2 tempStartPos = Vector2.zero;
         float tempStartRange = Random.Range(astSize / 4.0f, astSize / 2.0f);
 
         PosRange startPosRange = new PosRange(tempStartRange, tempStartPos);
@@ -85,24 +56,50 @@ public class Asteroid : MonoBehaviour
             float tempRange = 0;
             Vector2 tempPos = Vector2.zero;
 
+            int count = 2000;
             bool redo = true;
+
+            tempRange = Random.Range(astSize / 5.0f, astSize / 2.0f);
+
             do
             {
-                tempRange = Random.Range(astSize / 5.0f, astSize / 2.0f);
-                tempPos = new Vector2(Random.Range(-astSize - tempRange, astSize - tempRange), Random.Range(-astSize - tempRange, astSize - tempRange));
+                tempPos = new Vector2(Random.Range(-astSize, astSize), Random.Range(-astSize, astSize));
 
-                foreach (PosRange pR in PositionAndRangeList)
+                // check if close enought to 'center' of asteroid (square check to make asteroid have nicer shape)
+                // check left
+                if (tempPos.x > -astSize)
                 {
-                    if (tempPos.x - tempRange > -astSize && tempPos.y - tempRange > -astSize && tempPos.x + tempRange < astSize && tempPos.y + tempRange < astSize)
+                    // check bottom
+                    if (tempPos.y > -astSize)
                     {
-                        if (Vector2.Distance(pR.position, tempPos) < tempRange + pR.range + 1)
+                        // check right
+                        if (tempPos.x < astSize)
                         {
-                            redo = false;
+                            // check top
+                            if (tempPos.y < astSize)
+                            {
+                                // check if new position is close enought
+                                foreach (PosRange pR in PositionAndRangeList)
+                                {
+                                    float dist = Vector2.Distance(pR.position, tempPos);
+                                    float dist2 = tempRange + pR.range;
+                                    
+                                    if (Mathf.Abs(dist - dist2) < 1)
+                                        redo = false;
+
+                                    if (dist < dist2 - 0.75f)
+                                    {
+                                        redo = true;
+                                        break;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
-            while (redo);
+            while (redo  && count-->0);
+            
 
             PosRange temp = new PosRange(tempRange, tempPos);
             PositionAndRangeList.Add(temp);
@@ -128,12 +125,6 @@ public class Asteroid : MonoBehaviour
     }
     public void GenerateCellsForAsteroid()
     {
-        foreach(KeyValuePair<Position, GameObject> cell in AsteroidCells)
-        {
-            Destroy(cell.Value);
-        }
-        AsteroidCells.Clear();
-
         int minX = int.MaxValue;
         int maxX = int.MinValue;
         int minY = int.MaxValue;
@@ -156,6 +147,7 @@ public class Asteroid : MonoBehaviour
             if (pos.y + range > maxY)
                 maxY = (int)(pos.y + range);
         }
+
         int count = 0;
         for (int x = minX - 2; x < maxX + 2; x++)
         {
@@ -173,139 +165,35 @@ public class Asteroid : MonoBehaviour
                         GameObject temp = Instantiate(AsteroidCellPrefab, new Vector2(x, y), Quaternion.identity) as GameObject;
                         temp.name = "AsteroidCell (" + x + ", " + y + ")";
 
-                        AsteroidCells.Add(new Position(x, y), temp);
+                        Position tempPosition = new Position(x, y);
+                        AsteroidCells.Add(tempPosition, temp);
 
                         AsteroidCell cellScript = temp.GetComponent<AsteroidCell>();
                         if (cellScript != null)
+                        {
+                            cellScript.CellPosition = tempPosition;
                             cellScript.ID = count++;
+                            cellScript.ParentAsteroid = gameObject;
+                        }
                         else
                             Debug.LogWarning("Cell without Cellscript");
+
                         break;
                     }
                 }
             }
         }
-        
-        foreach (KeyValuePair<Position, GameObject> cell in AsteroidCells)
-        {
-            CellNeighbours cellNeighbours = new CellNeighbours();
-
-            GameObject neighbour;
-
-            // top layer cell neighbours
-            if (AsteroidCells.TryGetValue(cell.Key + new Position(-1, 1), out neighbour))
-            {
-                cellNeighbours.LeftAbove = new KeyValuePair<Position, GameObject>(cell.Key + new Position(-1, 1), neighbour);
-                cellNeighbours.HasLeftAbove = true;
-            }
-            if (AsteroidCells.TryGetValue(cell.Key + new Position(0, 1), out neighbour))
-            {
-                cellNeighbours.Above = new KeyValuePair<Position, GameObject>(cell.Key + new Position(0, 1), neighbour);
-                cellNeighbours.HasAbove = true;
-            }
-
-            if (AsteroidCells.TryGetValue(cell.Key + new Position(1, 1), out neighbour))
-            {
-                cellNeighbours.RightAbove = new KeyValuePair<Position, GameObject>(cell.Key + new Position(1, 1), neighbour);
-                cellNeighbours.HasRightAbove = true;
-            }
-
-            // middle layer cell neighbours
-            if (AsteroidCells.TryGetValue(cell.Key + new Position(-1, 0), out neighbour))
-            {
-                cellNeighbours.Left = new KeyValuePair<Position, GameObject>(cell.Key + new Position(-1, 0), neighbour);
-                cellNeighbours.HasLeft = true;
-            }
-            if (AsteroidCells.TryGetValue(cell.Key + new Position(1, 0), out neighbour))
-            {
-                cellNeighbours.Right = new KeyValuePair<Position, GameObject>(cell.Key + new Position(1, 0), neighbour);
-                cellNeighbours.HasRight = true;
-            }
-            
-            // bottom layer cell neighbours
-            if (AsteroidCells.TryGetValue(cell.Key + new Position(-1, -1), out neighbour))
-            {
-                cellNeighbours.LeftBelow = new KeyValuePair<Position, GameObject>(cell.Key + new Position(-1, -1), neighbour);
-                cellNeighbours.HasLeftBelow = true;
-            }
-            if (AsteroidCells.TryGetValue(cell.Key + new Position(0, -1), out neighbour))
-            {
-                cellNeighbours.Below = new KeyValuePair<Position, GameObject>(cell.Key + new Position(0, -1), neighbour);
-                cellNeighbours.HasBelow = true;
-            }
-            if (AsteroidCells.TryGetValue(cell.Key + new Position(1, -1), out neighbour))
-            {
-                cellNeighbours.RightBelow = new KeyValuePair<Position, GameObject>(cell.Key + new Position(1, -1), neighbour);
-                cellNeighbours.HasRightBelow = true;
-            }
-
-            AsteroidCell cellScript = cell.Value.GetComponent<AsteroidCell>();
-            SpriteRenderer cellRenderer = cell.Value.GetComponent<SpriteRenderer>();
-            if (cellScript != null)
-            {
-                cellScript.cellN = cellNeighbours;
-                int neighbourCount = 0;
-                int counter = 0;
-                if (cellNeighbours.HasLeftAbove)
-                {
-                    counter++;
-                    neighbourCount += 1;
-                }
-                if (cellNeighbours.HasAbove)
-                {
-                    counter++;
-                    neighbourCount += 2;
-                }
-                if (cellNeighbours.HasRightAbove)
-                {
-                    counter++;
-                    neighbourCount += 4;
-                }
-                if (cellNeighbours.HasLeft)
-                {
-                    counter++;
-                    neighbourCount += 8;
-                }
-                if (cellNeighbours.HasRight)
-                {
-                    counter++;
-                    neighbourCount += 16;
-                }
-                if (cellNeighbours.HasLeftBelow)
-                {
-                    counter++;
-                    neighbourCount += 32;
-                }
-                if (cellNeighbours.HasBelow)
-                {
-                    counter++;
-                    neighbourCount += 64;
-                }
-                if (cellNeighbours.HasRightBelow)
-                {
-                    counter++;
-                    neighbourCount += 128;
-                }
-                if(counter < 3)
-                    Debug.Log(counter);
-                cellRenderer.sprite = GameObject.FindGameObjectWithTag("SpriteManager").GetComponent<SpriteManager>().GetAsteroidSprite(neighbourCount);
-                
-            }
-            else
-                Debug.LogWarning("Cell without Cellscript");
-        }
         gameObject.name = "Asteroid (" + AsteroidCells.Count + ")";
-        
+
     }
     
 	void Update ()
     {
 	    if(Input.GetKey(KeyCode.R))
         {
-            Regenerate();
+            GenerateAsteroid();
         }
 	}
-
 
     public GameObject GetCellFromCoordinates(Position coordinates)
     {
