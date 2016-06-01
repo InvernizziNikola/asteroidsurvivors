@@ -54,7 +54,7 @@ public class Grid {
     {
         GameObject tempAsteroid = MonoBehaviour.Instantiate(asteroidPrefab) as GameObject;
         tempAsteroid.GetComponent<Asteroid>().AsteroidSize = size;
-        tempAsteroid.transform.position = new Vector3(5, 5);
+        tempAsteroid.transform.position = new Vector3(-5, 5);
 
         AddAsteroid(tempAsteroid);
 

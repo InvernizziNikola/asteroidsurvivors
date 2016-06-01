@@ -31,9 +31,9 @@ public class AsteroidCell : MonoBehaviour{
                 if (!(x == 0 && y == 0))
                 {
                     if (asteroidCells.TryGetValue(CellPosition + new Position(x, y), out neighbour))
-                        CellNeighbours.Neighbours.Add(neighbour);
+                        CellNeighbours.AddNeighbour(neighbour);
                     else
-                        CellNeighbours.Neighbours.Add(null);
+                        CellNeighbours.AddNeighbour(null);
                 }
             }
         }

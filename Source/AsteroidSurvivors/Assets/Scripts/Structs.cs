@@ -48,5 +48,29 @@ public struct Position
 [System.Serializable]
 public class CellNeighbours
 {
-    public List<GameObject> Neighbours = new List<GameObject>();
+    private List<GameObject> neighbours = new List<GameObject>();
+
+    public List<GameObject> Neighbours { get { return neighbours; } }
+
+    public void AddNeighbour(GameObject go)
+    {
+        neighbours.Add(go);
+    }
+
+    public GameObject GetNeighbour(Neighbour where)
+    {
+        return neighbours[(int)where]; 
+    }
+}
+
+public enum Neighbour
+{
+    AboveLeft = 0,
+    Above = 1,
+    AboveRight = 2,
+    Left = 3,
+    Right = 4,
+    BelowLeft = 5,
+    Below = 6,
+    BelowRight = 7
 }
