@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class MeshGenerator {
 
 
-    public static Mesh GenerateAsteroidCellMesh(CellNeighbours cellNeighbours)
+    public static Mesh GenerateAsteroidCellMesh(List<GameObject> cellNeighbours)
     {
         Mesh mesh = new Mesh();
 

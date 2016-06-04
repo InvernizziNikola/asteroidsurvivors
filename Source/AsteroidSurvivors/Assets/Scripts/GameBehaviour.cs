@@ -5,19 +5,25 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Collections.Generic;
 
 public class GameBehaviour : MonoBehaviour {
 
     public int GameVersion = 2;
-    public GameObject prefabAsteroid;
+    public GameObject prefabBunker;
     private bool StartedNew = false;
 
     public string FileName = "SaveFile.dat";
-    
+
+
+    public Dictionary<Vector2, string> DictTest = new Dictionary<Vector2, string>();
+
     // Use this for initialization
     void Start ()
     {
-        
+
+
+
     }
 	
 	// Update is called once per frame
@@ -53,7 +59,7 @@ public class GameBehaviour : MonoBehaviour {
         GameData gameData = new GameData();
         
         // Call save on grid to get all the grid data
-        gameData.GridData = Grid.GetInstant.Save();
+        //gameData.GridData = Grid.GetInstant.Save();
         // Call save on player to get all the player data
         gameData.PlayerData = Player.GetInstant.Save();
         
@@ -146,11 +152,13 @@ public class GameBehaviour : MonoBehaviour {
 
     void NewGame()
     {
-        // Create first asteroid
-        if (prefabAsteroid != null)
+        // Create first Bunker
+        
+        if (prefabBunker != null)
         {
             // just make the first asteroid the selectedasteroid!
-            Grid.GetInstant.SelectedAsteroid = Grid.GetInstant.CreateAsteroid(prefabAsteroid, AstSize.Small);
+            Grid.GetInstant.SelectedBunker = Grid.GetInstant.CreateBunker(prefabBunker);
         }
+        
     }
 }

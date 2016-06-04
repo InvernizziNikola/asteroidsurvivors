@@ -9,7 +9,7 @@ using UnityEngine.EventSystems;
 public class PlayerInputs : MonoBehaviour
 {
     public float targetZoom = 15;
-    private Plane plane = new Plane(Vector3.forward, 0);
+    private Plane plane = new Plane(Vector3.up, 0);
 
     // Use this for initialization
     void Start()
@@ -29,7 +29,7 @@ public class PlayerInputs : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
 
-                Vector2 mousePos = new Vector2();
+                Vector3 mousePos = new Vector3();
 
                 float dist;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -38,18 +38,20 @@ public class PlayerInputs : MonoBehaviour
                 {
                     mousePos = ray.GetPoint(dist);
                 }
+                if (mousePos.y != 0)
+                    Debug.Log("Something fishy in mousepos!" + mousePos);
+                
+                mousePos = new Vector3(Mathf.Round(mousePos.x), 0, Mathf.Round(mousePos.z));
 
-                mousePos = new Vector3(Mathf.Round(mousePos.x), Mathf.Round(mousePos.y));
 
 
+                GameObject mouseOverCell = Grid.GetInstant.GetCellFromCoordinates(mousePos);
 
-                GameObject mouseOverCell = Grid.GetInstant.GetCellFromCoordinates(new Position((int)mousePos.x, (int)mousePos.y));
-
-                if (mouseOverCell != null)
+                if (mouseOverCell == null)
                 {
-                    mouseOverCell.AddComponent<PowerPlantBehaviour>();
-                    mouseOverCell.GetComponent<MeshRenderer>().material.color = Color.green;
+                    Grid.GetInstant.SelectedBunker.GetComponent<Bunker>().Build(mousePos);
                 }
+
             }
 
             CameraMovement();
@@ -59,7 +61,7 @@ public class PlayerInputs : MonoBehaviour
 
     void CameraMovement()
     {
-        Camera.main.transform.position += new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical")) * Time.deltaTime * 10.0f;
+        Camera.main.transform.position += new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")) * Time.deltaTime * 10.0f;
     }
     void CameraZoomInOut()
     {

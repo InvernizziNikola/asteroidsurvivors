@@ -6,15 +6,16 @@ public class AsteroidCell : MonoBehaviour{
 
     public GameObject ParentAsteroid;
     public Position CellPosition;
-    public CellNeighbours CellNeighbours = new CellNeighbours();
     public int ID = -1;
 
+    public List<GameObject> neighbours = new List<GameObject>();
+    public List<GameObject> Neighbours { get { return neighbours; } }
 
     public void Start()
     {
         FindNeighbours();
 
-        GetComponent<MeshFilter>().mesh = MeshGenerator.GenerateAsteroidCellMesh(CellNeighbours);
+        GetComponent<MeshFilter>().mesh = MeshGenerator.GenerateAsteroidCellMesh(neighbours);
     }
 
 
@@ -31,9 +32,9 @@ public class AsteroidCell : MonoBehaviour{
                 if (!(x == 0 && y == 0))
                 {
                     if (asteroidCells.TryGetValue(CellPosition + new Position(x, y), out neighbour))
-                        CellNeighbours.AddNeighbour(neighbour);
+                        Neighbours.Add(neighbour);
                     else
-                        CellNeighbours.AddNeighbour(null);
+                        Neighbours.Add(null);
                 }
             }
         }
@@ -43,7 +44,7 @@ public class AsteroidCell : MonoBehaviour{
     {
         CellData cellData = new CellData();
 
-        foreach (GameObject neighbour in CellNeighbours.Neighbours)
+        foreach (GameObject neighbour in neighbours)
         {
             cellData.CellNeighbours.Neighbours.Add(neighbour == null ? false : true);
         }

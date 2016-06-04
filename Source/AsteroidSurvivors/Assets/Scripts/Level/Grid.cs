@@ -17,78 +17,70 @@ public class Grid {
             return gridInstant;
         }
     }
-    
-    private GameObject selectedAsteroid;
-    public GameObject SelectedAsteroid
+
+
+    private GameObject selectedBunker;
+
+    public GameObject SelectedBunker
     {
-        get
-        {
-            return selectedAsteroid;
-        }
-        set
-        {
-            selectedAsteroid = value;
-        }
+        get { return selectedBunker; }
+        set { selectedBunker = value; }
     }
+
 
     private Grid()
     {
         // private constructor so nobody can create a new grid
     }
+    
+    private List<GameObject> BunkerList = new List<GameObject>();
 
-    private List<GameObject> AsteroidList = new List<GameObject>();
-
-    public GameObject GetCellFromCoordinates(Position coordinates)
+    public GameObject GetCellFromCoordinates(Vector3 coordinates)
     {
-        if (selectedAsteroid == null)
+        if (selectedBunker == null)
             return null;
 
-        Asteroid astScript = selectedAsteroid.GetComponent<Asteroid>();
-        if (astScript == null)
-            return null;
+        Bunker bunker = selectedBunker.GetComponent<Bunker>();
 
-        return astScript.GetCellFromCoordinates(coordinates);
+        return bunker.GetCellFromCoordinates(coordinates);
     }
 
-    public GameObject CreateAsteroid(GameObject asteroidPrefab, AstSize size)
+    public GameObject CreateBunker(GameObject prefab)
     {
-        GameObject tempAsteroid = MonoBehaviour.Instantiate(asteroidPrefab) as GameObject;
-        tempAsteroid.GetComponent<Asteroid>().AsteroidSize = size;
-        tempAsteroid.transform.position = new Vector3(-5, 5);
+        GameObject bunker = GameObject.Instantiate(prefab) as GameObject;
 
-        AddAsteroid(tempAsteroid);
-
-        return tempAsteroid;
+        return AddBunker(bunker); 
     }
 
-    public void AddAsteroid(GameObject newAsteroid)
+    public GameObject AddBunker(GameObject newBunker)
     {
-        AsteroidList.Add(newAsteroid);
+        BunkerList.Add(newBunker);
+
+        return newBunker;
     }
 
 
     public void Load(GridData gridData)
     {
-        foreach(AsteroidData astData in gridData.Asteroids)
-        {
-
-        }
+        
     }
 
 
+    /*
     public GridData Save()
     {
         GridData gridData = new GridData();
 
         // save asteroid
-        foreach(GameObject astGO in AsteroidList)
+       foreach(GameObject astGO in AsteroidList)
         {
-            gridData.Asteroids.Add(astGO.GetComponent<Asteroid>().Save());
+            //gridData.Asteroids.Add(astGO.GetComponent<Asteroid>().Save());
         }
 
         // add more stuff that is child of the grid and needs to be saved
 
         return gridData;
     }
+    */
 }
 
