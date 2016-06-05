@@ -4,34 +4,50 @@ using System.Collections.Generic;
 
 public class Bunker : MonoBehaviour {
 
-    private Dictionary<Vector3, GameObject> bunkerCells = new Dictionary<Vector3, GameObject>();
+    [SerializeField]
+    public Dictionary<Vector3, BunkerCell> bunkerCells = new Dictionary<Vector3, BunkerCell>();
 
     public GameObject cellPrefab;
 
+
+    void Awake()
+    {
+        Grid.GetInstance.AddBunker(this);
+
+    }
 	// Use this for initialization
-	void Start () {
+	void Start ()
+    {
 	
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+    {
 	
+
+
 	}
 
-    public void Build(Vector3 coordinates)
-    {
-        GameObject cell = GameObject.Instantiate(cellPrefab) as GameObject;
-        cell.transform.position = coordinates;
 
-        bunkerCells.Add(coordinates, cell);
+    public GameObject CreateCell(Vector3 coordinates)
+    {
+        GameObject cell = GameObject.Instantiate(cellPrefab, coordinates, Quaternion.identity) as GameObject;
+
+        BunkerCell c = cell.GetComponent<BunkerCell>();
+        
+        bunkerCells.Add(coordinates, c);
+        c.SetBunker(this);
+
+        return cell;
     }
 
-    public GameObject GetCellFromCoordinates(Vector3 c)
+    public BunkerCell GetCellFromCoordinates(Vector3 c)
     {
-        GameObject outGO;
+        BunkerCell bunkerCell;
 
-        if (bunkerCells.TryGetValue(c, out outGO))
-            return outGO;
+        if (bunkerCells.TryGetValue(c, out bunkerCell))
+            return bunkerCell;
 
         return null;
     }

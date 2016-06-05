@@ -5,66 +5,138 @@ using System.Collections.Generic;
 
 
 
-public class Grid {
+public class Grid : MonoBehaviour {
+ 
+    public GameObject BunkerPrefab;
+    public GameObject PreviewPrefab;
 
-    private static Grid gridInstant;
-    public static Grid GetInstant
+    private Plane plane = new Plane(Vector3.up, 0);
+
+
+    private static Grid gridInstance;
+    public static Grid GetInstance
     {
         get
         {
-            if (gridInstant == null)
-                gridInstant = new Grid();
-            return gridInstant;
+            if (gridInstance == null)
+                gridInstance = (new GameObject("Grid")).AddComponent<Grid>();
+
+            return gridInstance;
         }
     }
 
+    void Awake()
+    {
+        gridInstance = this;
+    }
 
-    private GameObject selectedBunker;
 
-    public GameObject SelectedBunker
+    private Bunker selectedBunker;
+
+    public Bunker SelectedBunker
     {
         get { return selectedBunker; }
         set { selectedBunker = value; }
     }
-
-
-    private Grid()
-    {
-        // private constructor so nobody can create a new grid
-    }
     
-    private List<GameObject> BunkerList = new List<GameObject>();
+    private List<Bunker> BunkerList = new List<Bunker>();
 
-    public GameObject GetCellFromCoordinates(Vector3 coordinates)
+
+
+
+    public Bunker CreateFirstBunker()
+    {
+        GameObject bunker = GameObject.Instantiate(BunkerPrefab) as GameObject;
+
+        Bunker b = bunker.GetComponent<Bunker>();
+        SelectedBunker = b;
+
+        b.CreateCell(new Vector3(0, 0, 0));
+
+        return b;
+    }
+
+    public void AddBunker(Bunker newBunker)
+    {
+        BunkerList.Add(newBunker);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void CreatePreview()
+    {
+        GameObject preview = GameObject.Instantiate(PreviewPrefab) as GameObject;
+    }
+
+    public GameObject CreateBuilding()
+    {
+        return null;
+    }
+
+
+
+
+
+
+
+
+
+
+
+    public BunkerCell GetCellOnMousePosition()
     {
         if (selectedBunker == null)
             return null;
 
         Bunker bunker = selectedBunker.GetComponent<Bunker>();
+        if (bunker == null)
+            return null;
 
-        return bunker.GetCellFromCoordinates(coordinates);
+        return bunker.GetCellFromCoordinates(GetMousePos());
     }
 
-    public GameObject CreateBunker(GameObject prefab)
+    public Vector3 GetMousePos()
     {
-        GameObject bunker = GameObject.Instantiate(prefab) as GameObject;
+        Vector3 mousePos = new Vector3();
 
-        return AddBunker(bunker); 
+        float dist;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if (plane.Raycast(ray, out dist))
+        {
+            mousePos = ray.GetPoint(dist);
+        }
+        if (mousePos.y != 0)
+            Debug.Log("Something fishy in mousepos!" + mousePos);
+
+        mousePos = new Vector3(Mathf.Round(mousePos.x), 0, Mathf.Round(mousePos.z));
+
+        return mousePos;
     }
 
-    public GameObject AddBunker(GameObject newBunker)
-    {
-        BunkerList.Add(newBunker);
-
-        return newBunker;
-    }
 
 
     public void Load(GridData gridData)
     {
         
     }
-
 
     /*
     public GridData Save()

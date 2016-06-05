@@ -26,36 +26,28 @@ public class PlayerInputs : MonoBehaviour
         if (!overUI)
         {
 
-            if (Input.GetMouseButtonDown(0))
+            /*if (Input.GetMouseButtonDown(0))
             {
 
-                Vector3 mousePos = new Vector3();
-
-                float dist;
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-                if (plane.Raycast(ray, out dist))
-                {
-                    mousePos = ray.GetPoint(dist);
-                }
-                if (mousePos.y != 0)
-                    Debug.Log("Something fishy in mousepos!" + mousePos);
-                
-                mousePos = new Vector3(Mathf.Round(mousePos.x), 0, Mathf.Round(mousePos.z));
-
-
-
-                GameObject mouseOverCell = Grid.GetInstant.GetCellFromCoordinates(mousePos);
+                GameObject mouseOverCell = Grid.GetInstance.GetCellOnMousePosition();
 
                 if (mouseOverCell == null)
                 {
-                    Grid.GetInstant.SelectedBunker.GetComponent<Bunker>().Build(mousePos);
+                    if(Grid.GetInstance.SelectedBunker != null)
+                        Grid.GetInstance.SelectedBunker.GetComponent<Bunker>().CreateCell(Grid.GetInstance.GetMousePos());
                 }
 
-            }
+            }*/
 
             CameraMovement();
             CameraZoomInOut();
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            Grid.GetInstance.CreatePreview();
+            Player.GetInstant.PlayerState = PlayerState.Building;
         }
     }
 

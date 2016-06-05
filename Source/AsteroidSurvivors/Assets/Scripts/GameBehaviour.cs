@@ -10,13 +10,10 @@ using System.Collections.Generic;
 public class GameBehaviour : MonoBehaviour {
 
     public int GameVersion = 2;
-    public GameObject prefabBunker;
+
     private bool StartedNew = false;
 
     public string FileName = "SaveFile.dat";
-
-
-    public Dictionary<Vector2, string> DictTest = new Dictionary<Vector2, string>();
 
     // Use this for initialization
     void Start ()
@@ -34,15 +31,21 @@ public class GameBehaviour : MonoBehaviour {
             StartedNew = !StartedNew;
             NewGame();
         }
-        if (Input.GetKeyDown(KeyCode.K))
+        /*if (Input.GetKeyDown(KeyCode.K))
         {
             Save();
         }
         if (Input.GetKeyDown(KeyCode.L))
         {
             Load();
-        }
+        }*/
 
+    }
+
+    void NewGame()
+    {
+        // Create first Bunker
+        Grid.GetInstance.CreateFirstBunker();
     }
 
     void Save()
@@ -143,22 +146,9 @@ public class GameBehaviour : MonoBehaviour {
     public void LoadGameData(GameData gameData)
     {
         // load grid data into the grid
-        Grid.GetInstant.Load(gameData.GridData);
+        Grid.GetInstance.Load(gameData.GridData);
 
         // load player data into the player
         Player.GetInstant.Load(gameData.PlayerData);
-    }
-
-
-    void NewGame()
-    {
-        // Create first Bunker
-        
-        if (prefabBunker != null)
-        {
-            // just make the first asteroid the selectedasteroid!
-            Grid.GetInstant.SelectedBunker = Grid.GetInstant.CreateBunker(prefabBunker);
-        }
-        
     }
 }

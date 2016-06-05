@@ -15,6 +15,15 @@ public class Player {
 
     private GameObject PlayerObject;
 
+
+    private PlayerState playerState = PlayerState.None;
+
+    public PlayerState PlayerState
+    {
+        get { return playerState; }
+        set { playerState = value; }
+    }
+
     private Player()
     {
         // private constructor so nobody can create a new player
