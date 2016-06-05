@@ -8,8 +8,7 @@ using UnityEngine.EventSystems;
 
 public class PlayerInputs : MonoBehaviour
 {
-    public float targetZoom = 15;
-    private Plane plane = new Plane(Vector3.up, 0);
+    private float targetZoom = 15;
 
     // Use this for initialization
     void Start()

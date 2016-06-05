@@ -42,16 +42,17 @@ public class Grid : MonoBehaviour {
     private List<Bunker> BunkerList = new List<Bunker>();
 
 
-
-
     public Bunker CreateFirstBunker()
     {
         GameObject bunker = GameObject.Instantiate(BunkerPrefab) as GameObject;
 
         Bunker b = bunker.GetComponent<Bunker>();
         SelectedBunker = b;
-
+        
         b.CreateCell(new Vector3(0, 0, 0));
+        b.CreateCell(new Vector3(1, 0, 0));
+        b.CreateCell(new Vector3(1, 0, 1));
+        b.CreateCell(new Vector3(0, 0, 1));
 
         return b;
     }

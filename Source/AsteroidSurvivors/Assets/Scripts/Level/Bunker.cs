@@ -4,8 +4,16 @@ using System.Collections.Generic;
 
 public class Bunker : MonoBehaviour {
 
-    [SerializeField]
-    public Dictionary<Vector3, BunkerCell> bunkerCells = new Dictionary<Vector3, BunkerCell>();
+
+    private Dictionary<Vector3, BunkerCell> bunkerCells = new Dictionary<Vector3, BunkerCell>();
+
+    public Dictionary<Vector3, BunkerCell> BunkerCells
+    {
+        get { return bunkerCells; }
+    }
+
+    public List<GameObject> Buildings = new List<GameObject>();
+
 
     public GameObject cellPrefab;
 
@@ -30,16 +38,16 @@ public class Bunker : MonoBehaviour {
 	}
 
 
-    public GameObject CreateCell(Vector3 coordinates)
+    public BunkerCell CreateCell(Vector3 coordinates)
     {
-        GameObject cell = GameObject.Instantiate(cellPrefab, coordinates, Quaternion.identity) as GameObject;
+        GameObject cell = GameObject.Instantiate(cellPrefab, coordinates, Quaternion.Euler(90,0,0)) as GameObject;
 
         BunkerCell c = cell.GetComponent<BunkerCell>();
         
         bunkerCells.Add(coordinates, c);
         c.SetBunker(this);
-
-        return cell;
+        
+        return c;
     }
 
     public BunkerCell GetCellFromCoordinates(Vector3 c)
